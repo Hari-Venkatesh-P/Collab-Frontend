@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from "react-router";
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -95,7 +96,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function NavBar() {
+export default function NavBar(props) {
+  const history = useHistory();
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -201,17 +204,17 @@ export default function NavBar() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-            <ListItem button key={"Tasks"}>
+            <ListItem button key={"Projects"} onClick={()=>{history.replace("/")}}>
                 <ListItemIcon><AssignmentLateTwoToneIcon /> </ListItemIcon>
-                <ListItemText primary={"Tasks"} />
+                <ListItemText primary={"Projects"} />
             </ListItem>
             <Divider />
-            <ListItem button key={"Teams"}>
+            <ListItem button key={"Teams"} onClick={()=>{window.location.href = "/teams"}}>
                 <ListItemIcon><PeopleTwoToneIcon /></ListItemIcon>
                 <ListItemText primary={"Teams"} />
             </ListItem>
             <Divider />
-            <ListItem button key={"Members"}>
+            <ListItem button key={"Members"} onClick={()=>{history.replace("/members")}}>
                 <ListItemIcon><PermIdentityTwoToneIcon /></ListItemIcon>
                 <ListItemText primary={"Members"} />
             </ListItem>
