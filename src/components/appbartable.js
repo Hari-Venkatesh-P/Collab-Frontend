@@ -47,8 +47,15 @@ export default function AppBarTable(props) {
         <StyledTableCell key={Math.random()}>{heading}</StyledTableCell>
         )
       })
-     }else{
+     }else if(props.isTeamMembers){
        headings = ['NAME' , 'MOBILE' , 'EMAIL']
+      return headings.map((heading,idx) => {
+        return(
+        <StyledTableCell key={Math.random()}>{heading}</StyledTableCell>
+        )
+      })
+     }else{
+      headings = ['NAME' , 'SPECIALITY' , 'TEAM_STRENGTH' , 'TOTAL PROJECTS']
       return headings.map((heading,idx) => {
         return(
         <StyledTableCell key={Math.random()}>{heading}</StyledTableCell>
@@ -59,7 +66,7 @@ export default function AppBarTable(props) {
 
     function renderBody(){
       if(props.isProject){
-        return props.teamDetails.coredetails.assigned_projects.map((project,idx) => {
+        return props.tableDetails.coredetails.assigned_projects.map((project,idx) => {
           return(
             <StyledTableRow key={project.title}>
             <StyledTableCell component="th" scope="row">
@@ -71,18 +78,31 @@ export default function AppBarTable(props) {
           </StyledTableRow>
           )
         })
-       }else{
-        return props.teamDetails.coredetails.team_members.map((member,idx) => {
+       }else if (props.isTeamMembers) {
+        return props.tableDetails.coredetails &&  props.tableDetails.coredetails.team_members.map((member,idx) => {
           return(
-            <StyledTableRow key={member.name} >
+            <StyledTableRow key={member.email}>
             <StyledTableCell component="th" scope="row">
               {member.name}
             </StyledTableCell>
-            <StyledTableCell align="left">{member.mobile}</StyledTableCell>
             <StyledTableCell align="left">{member.email}</StyledTableCell>
+            <StyledTableCell align="left">{member.mobile}</StyledTableCell>
           </StyledTableRow>
           )
         })
+       }else{
+        if(props.tableDetails.coredetails && props.tableDetails.coredetails.team) {
+          return(
+            <StyledTableRow key={props.tableDetails.coredetails.team.name} >
+            <StyledTableCell component="th" scope="row">
+              {props.tableDetails.coredetails.team.name.toString} &nbsp; TEAM 
+            </StyledTableCell>
+            <StyledTableCell align="left">{props.tableDetails.coredetails.team.speciality}</StyledTableCell>
+            <StyledTableCell align="left">{props.tableDetails.coredetails.team.team_strength} &nbsp; MEMBERS</StyledTableCell>
+            <StyledTableCell align="left">{props.tableDetails.coredetails.team.project_count}  &nbsp; PROJECTS</StyledTableCell>
+          </StyledTableRow>
+          )
+        }
        }
     }
 

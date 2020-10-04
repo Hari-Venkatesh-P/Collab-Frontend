@@ -209,7 +209,7 @@ export default function NavBar(props) {
                 <ListItemText primary={"Projects"} />
             </ListItem>
             <Divider />
-            <ListItem button key={"Teams"} onClick={()=>{window.location.href = "/teams"}}>
+            <ListItem button key={"Teams"} onClick={()=>{history.replace("/teams")}}>
                 <ListItemIcon><PeopleTwoToneIcon /></ListItemIcon>
                 <ListItemText primary={"Teams"} />
             </ListItem>

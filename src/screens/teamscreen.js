@@ -37,7 +37,7 @@ function TeamScreen(props) {
     const useStyles = makeStyles((theme) => ({
         button: {
           margin: theme.spacing(1),
-        },
+        }, 
     }));
 
 
@@ -127,45 +127,45 @@ function TeamScreen(props) {
                     >
                     <DialogTitle id="alert-dialog-title" >{"Creating a new team !!"}</DialogTitle>
                         <DialogContent>
-                        <Box display="flex" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
-                        <Box p={1} >
-                            <InputLabel htmlFor="component-simple" style={{color:"black"}}>Name</InputLabel>
-                            <TextField error={(newTeamName === "") ? true :false}
-                                value = {newTeamName}
-                                onChange={(e)=>{setNewTeamName(e.target.value)}}
-                                id="standard-error-helper-text"
-                                 placeholder="Team Name"
-                                 helperText="Team Name is mandatory."
-                            />
-                        </Box>
-                        <Box p={1} >
-                            <InputLabel htmlFor="component-simple"  style={{color:"black"}}>Speciality</InputLabel>
-                                <TextField error={ (newTeamSpeciality === "") ? true :false}
-                                value = {newTeamSpeciality}
-                                onChange={(e)=>{setNewTeamSpeciality(e.target.value)}}
-                                id="standard-error-helper-text"
-                                 placeholder="Team Speciality"
-                                 helperText="Team Speciality is Mandatory"
-                                />
-                        </Box>
-                    </Box>
-                    <Box display="flex" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
-                        <Box p={1} >
-                            <InputLabel htmlFor="component-simple"  style={{color:"black"}}>Description</InputLabel>
-                            <TextField error={ (newTeamDescription === "") ? true :false}
-                                onChange={(e)=>{setNewTeamDescription(e.target.value)}}
-                                value={newTeamDescription}
-                                id="standard-error-helper-text"
-                                 placeholder="Team Description"
-                                 multiline
-                                 rows={4}
-                                 fullWidth
-                                 helperText="Description is mandatory"
-                            />
-                        </Box>
-                    </Box>
+                        <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
+                                <Box p={1} >
+                                    <InputLabel htmlFor="component-simple"  style={{color:"black"}}>Name</InputLabel>
+                                        <TextField error={ (newTeamName === "") ? true :false}
+                                        value = {newTeamName}
+                                        onChange={(e)=>{setNewTeamName(e.target.value)}}
+                                        id="standard-error-helper-text"
+                                        placeholder="Team Name"
+                                        helperText="Team Name is Mandatory"
+                                        />
+                                </Box>
+                                <Box p={1} >
+                                    <InputLabel htmlFor="component-simple"  style={{color:"black"}}>Speciality</InputLabel>
+                                    <TextField error={ (newTeamSpeciality === "") ? true :false}
+                                        value = {newTeamSpeciality}
+                                        onChange={(e)=>{setNewTeamSpeciality(e.target.value)}}
+                                        id="standard-error-helper-text"
+                                        placeholder="Team Speciality"
+                                        helperText="Team Speciality is Mandatory"
+                                    />
+                                </Box>
+                            </Box>
+                        <Box display="flex"  flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
+                            <Box p={1} >
+                                <InputLabel htmlFor="component-simple"  style={{color:"black"}}>Description</InputLabel>
+                                    <TextField error={ (newTeamDescription === "") ? true :false}
+                                        onChange={(e)=>{setNewTeamDescription(e.target.value)}}
+                                        value={newTeamDescription}
+                                        id="standard-error-helper-text"
+                                        placeholder="Team Description"
+                                        multiline
+                                        rows={4}
+                                        fullWidth
+                                    helperText="Description is mandatory"
+                                    />
+                                </Box>
+                            </Box>
                         </DialogContent>
-                    <DialogActions>
+                        <DialogActions>
                         <Button onClick={handleClose}  variant="outlined"
                         color="primary"
                         size="large"

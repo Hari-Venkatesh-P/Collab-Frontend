@@ -76,17 +76,18 @@ export default function DataTable(props) {
         })
        }if(!props.isTeam &&  props.tableDetails.length!=0 ){
         return props.tableDetails.map((member,idx) => {
+          console.log(member)
           return(
-            <StyledTableRow key={member?.name} onClick={()=>{alert(member?._id)}}>
-                <StyledTableCell component="th" scope="row"> {member?.name} </StyledTableCell>
-                <StyledTableCell align="left">{member?.mobile}</StyledTableCell>
-                <StyledTableCell align="left">{member?.email}</StyledTableCell>
-                <StyledTableCell align="left">{member?.team.name}</StyledTableCell>
-                <StyledTableCell align="left">{member?.project_count}</StyledTableCell>
+            <StyledTableRow key={member?.name} >
+                <StyledTableCell component="th" scope="row" onClick={()=>{props.onRowClick(member._id)}}> {member?.name} </StyledTableCell>
+                <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.mobile}</StyledTableCell>
+                <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.email}</StyledTableCell>
+                <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.team.name}</StyledTableCell>
+                <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.project_count}</StyledTableCell>
                     <IconButton edge="start"
                       className={classes.menuButton}
                       color="inherit"
-                      aria-label="Delete Icon" onClick={ () => {alert(member._id)}}><DeleteIcon /></IconButton>
+                      aria-label="Delete Icon"><DeleteIcon onClick={()=>{props.makeDeletememberMutation(member._id)}}/></IconButton>
             </StyledTableRow>
           )
         })

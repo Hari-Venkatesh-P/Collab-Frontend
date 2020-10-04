@@ -1,7 +1,8 @@
-import {GET_ALL_TEAMS_BASIC_DETAILS , ADD_NEW_TEAM , GET_TEAM_CORE_DETAILS} from "../actionstrings"
+import {GET_ALL_TEAMS_BASIC_DETAILS , ADD_NEW_TEAM , GET_TEAM_CORE_DETAILS  ,TEAM_NAMES_FOR_NEW_MEMBER, ADD_NEW_MEMBER} from "../actionstrings"
 
 const initialState = {
-    teams : []
+    teams : [],
+    existingTeams : []
 };
 
 export const teamReducer = (state = initialState, action) => {
@@ -21,6 +22,12 @@ export const teamReducer = (state = initialState, action) => {
                   }
                 }) 
               };
+      case TEAM_NAMES_FOR_NEW_MEMBER:
+          return { 
+            ...state, 
+            teams: state.teams,
+            existingTeams : action.payload
+           };        
       default:
         return state;
     }

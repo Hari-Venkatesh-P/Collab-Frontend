@@ -7,7 +7,7 @@ import PeopleTwoToneIcon from '@material-ui/icons/PeopleTwoTone';
 
 import AppBarTable from "../components/appbartable"
 
-export default function TeamAppBar(props) {
+export default function MemberAppBar(props) {
 
   const [showProject, setShowProject] = React.useState(false);
   const [value, setValue] = React.useState(0);
@@ -20,6 +20,7 @@ export default function TeamAppBar(props) {
     }
   }
 
+  console.log(props)
 
   const handleChange = () => {
     setShowProject(!showProject);
@@ -39,14 +40,13 @@ export default function TeamAppBar(props) {
         centered
       >
         <Tab label="Project Details" icon={<AssignmentLateTwoToneIcon />} />
-        <Tab label="Team Member Details" icon={<PeopleTwoToneIcon />}  />
+        <Tab label="Team Details" icon={<PeopleTwoToneIcon />}  />
       </Tabs>
      
     </Paper>
       </div>
-     <AppBarTable isProject={showProject} isTeamMembers={!showProject} tableDetails={props.teamDetails}></AppBarTable>
+     <AppBarTable isProject={showProject} isTeamDetails={!showProject} tableDetails={props.memberDetails}></AppBarTable>
 
     </div>
-      
   );
 }
