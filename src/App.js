@@ -18,11 +18,11 @@ import MemberScreen from "../src/screens/memberscreen"
 function App() {
 
   const httpLink = new HttpLink({
-    uri: 'https://collab-services.herokuapp.com/graphql',
+    uri: 'http://localhost:4000/graphql',
 });
 
 const wsLink = new WebSocketLink({
-    uri: `ws://collab-services.herokuapp.com/graphql`,
+    uri: `ws://localhost:4000/graphql`,
     options: {
       reconnect: true
     }

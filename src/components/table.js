@@ -7,6 +7,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
+
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -27,34 +30,68 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-function createData(column1, column2, column3, column4, column5 , id) {
-  return { column1, column2, column3, column4, column5 , id };
-}
-
-const useStyles = makeStyles({
-  table: {
-    minWidth: 700,
-  },
-});
+  const useStyles = makeStyles((theme) => ({
+    table: {
+      // minWidth: 900,
+    },
+    deleteicon: {
+      marginRight: theme.spacing(2),
+    },
+  }));
 
 export default function DataTable(props) {
   const classes = useStyles();
-  const rows = []
-  var ts
-  props.rowdetails.map((row)=>{
-        ts = new Date(row.created_at.toString());
-        rows.push(createData(row.name.toString().toUpperCase(),row.speciality,row.team_strength,row.project_count,ts.toDateString(),row._id))
-  })
 
-
-   function renderHeading(){
-    return props.headings.map((heading,idx) => {
+  function renderHeading(){
+    var headings = [] 
+    if(props.isTeam){
+      headings = ['Team Name','Team Speciality','Team Strength','Total Projects','Team Created At']
+      return headings.map((heading,idx) => {
         return(
         <StyledTableCell key={Math.random()}>{heading}</StyledTableCell>
         )
       })
+    }else{
+        headings = ['Member Name' ,'Mobile', 'Email' ,'Team', 'Total Projects', 'Delete']
+        return headings.map((heading,idx) => {
+          return(
+            <StyledTableCell key={Math.random()}>{heading}</StyledTableCell>
+          )
+        })
+      }
     }
+    function renderBody(){
+      if(props.isTeam && props.tableDetails.length!=0){
+        return props.tableDetails.map((team,idx) => {
+          return(
+            <StyledTableRow key={team.title} onClick={()=>{props.onRowClick(team._id)}}>
+              <StyledTableCell component="th" scope="row"> {team?.name.toString().toUpperCase()}</StyledTableCell>
+              <StyledTableCell align="left">{team?.speciality}</StyledTableCell>
+              <StyledTableCell align="left">{team?.team_strength}</StyledTableCell>
+              <StyledTableCell align="left">{team?.project_count}</StyledTableCell>
+            <StyledTableCell align="left">{new Date(team?.created_at.toString()).toDateString()}</StyledTableCell>
 
+          </StyledTableRow>
+          )
+        })
+       }if(!props.isTeam &&  props.tableDetails.length!=0 ){
+        return props.tableDetails.map((member,idx) => {
+          return(
+            <StyledTableRow key={member?.name} onClick={()=>{alert(member?._id)}}>
+                <StyledTableCell component="th" scope="row"> {member?.name} </StyledTableCell>
+                <StyledTableCell align="left">{member?.mobile}</StyledTableCell>
+                <StyledTableCell align="left">{member?.email}</StyledTableCell>
+                <StyledTableCell align="left">{member?.team.name}</StyledTableCell>
+                <StyledTableCell align="left">{member?.project_count}</StyledTableCell>
+                    <IconButton edge="start"
+                      className={classes.menuButton}
+                      color="inherit"
+                      aria-label="Delete Icon" onClick={ () => {alert(member._id)}}><DeleteIcon /></IconButton>
+            </StyledTableRow>
+          )
+        })
+       }
+      }
 
   return (
     <TableContainer component={Paper}>
@@ -65,17 +102,7 @@ export default function DataTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.id} onClick={()=>{props.onRowClick(row.id)}}>
-              <StyledTableCell component="th" scope="row">
-                {row.column1}
-              </StyledTableCell>
-              <StyledTableCell align="left">{row.column2}</StyledTableCell>
-              <StyledTableCell align="left">{row.column3}</StyledTableCell>
-              <StyledTableCell align="left">{row.column4}</StyledTableCell>
-              <StyledTableCell align="left">{(row.column5)}</StyledTableCell>
-            </StyledTableRow>
-          ))}
+            {renderBody()}
         </TableBody>
       </Table>
     </TableContainer>

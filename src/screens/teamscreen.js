@@ -15,6 +15,8 @@ import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+
 
 import DataTable from "../components/table"
 import ViewTeam from "../components/viewteams"
@@ -85,7 +87,7 @@ function TeamScreen(props) {
         .then(result=>{
             console.log(result)
             if(result.data.createTeam){
-                NotificationManager.success('New Team is created','Success',3000);
+                NotificationManager.success(" New Team "+ newTeamName +" is created",'Success',3000);
                 dispatch({type:ADD_NEW_TEAM,payload:result.data.createTeam})
                 handleClose()
             }
@@ -178,23 +180,41 @@ function TeamScreen(props) {
                     </DialogActions>
                 </Dialog>
                 <div  style={{margin:"3%"}}>
-                <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
-                    <Box p={1} >
-                        <Button variant="outlined"
-                               color="primary"
-                                className={classes.button}
-                                startIcon={<AddIcon />}
-                                onClick={handleClickOpen}
-                        >
-                            Add New Team
-                        </Button>
-                    </Box>
-                </Box>
                   {
-                      basicView &&  <DataTable headings={['Team Name','Team Speciality','Team Strength','Total Projects','Team Created At']} rowdetails={teamData.teams} onRowClick={toggleToTeamCoreDetailsView}></DataTable>
+                      basicView &&
+                        <div>
+                                <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
+                                    <Box p={1} >
+                                        <Button variant="outlined"
+                                                color="primary"
+                                                className={classes.button}
+                                                startIcon={<AddIcon />}
+                                                onClick={handleClickOpen}
+                                        >
+                                            Add New Team
+                                        </Button>
+                                    </Box>
+                                </Box>
+                                <DataTable isTeam={true} tableDetails={teamData.teams} onRowClick={toggleToTeamCoreDetailsView}></DataTable>
+                        </div>  
                   } 
                   {
-                      !basicView &&  <ViewTeam viewId={viewId} onRowClick={toggleToTeamCoreDetailsView}></ViewTeam>
+                      !basicView &&  
+                      <div>
+                            <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
+                                    <Box p={1} >
+                                        <Button variant="outlined"
+                                                color="primary"
+                                                className={classes.button}
+                                                startIcon={<ArrowBackIcon />}
+                                                onClick={toggleToTeamCoreDetailsView}
+                                        >
+                                           Go Back
+                                        </Button>
+                                    </Box>
+                            </Box>
+                            <ViewTeam viewId={viewId} ></ViewTeam>
+                      </div>
                   } 
               </div>
           </div>

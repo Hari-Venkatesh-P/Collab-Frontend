@@ -1,12 +1,13 @@
-import * as redux from "redux";
-import { combineReducers } from "redux";
+import { combineReducers , createStore} from "redux";
 import {teamReducer} from "./reducers/teamreducer";
+import {memberReducer} from "./reducers/memberreducer";
+
 
 const rootReducer = combineReducers({
   teamReducer: teamReducer,
+  memberReducer : memberReducer
 });
 
-
-const store = redux.createStore(rootReducer);
+const store = createStore(rootReducer);
 
 export default store;
