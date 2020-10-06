@@ -7,6 +7,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -39,7 +41,6 @@ const useStyles = makeStyles({
 export default function AppBarTable(props) {
   const classes = useStyles();
 
-  console.log(props)
    function renderHeading(){
     var headings = [] 
      if(props.isProjectFromTeamScreen ){
@@ -205,11 +206,13 @@ export default function AppBarTable(props) {
           return(
             <StyledTableRow key={member.name} >
             <StyledTableCell component="th" scope="row">
-              {member.name.toString().toUpperCase()} &nbsp; TEAM 
+              {member.name.toString().toUpperCase()} 
             </StyledTableCell>
             <StyledTableCell align="left">{member.email}</StyledTableCell>
             <StyledTableCell align="left">{member.mobile}</StyledTableCell>
-            <StyledTableCell align="left">DELETE</StyledTableCell>
+            <IconButton edge="start"
+                      color="inherit"
+                      aria-label="Delete Icon"><DeleteIcon onClick={()=>{props.makeDeleteMemberFromProject(member._id)}}/></IconButton>
           </StyledTableRow>
           )
         })

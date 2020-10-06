@@ -7,7 +7,7 @@ import AssignmentIndTwoToneIcon from '@material-ui/icons/AssignmentIndTwoTone';
 
 import AppBarTable from "../components/appbartable"
 
-export default function MemberAppBar(props) {
+export default function ProjectAppBar(props) {
 
   const [isTeam, setIsTeam] = React.useState(true);
   const [value, setValue] = React.useState(0);
@@ -43,7 +43,7 @@ export default function MemberAppBar(props) {
      
     </Paper>
       </div>
-        <AppBarTable isTeamFromViewProjectScreen={isTeam} isMemberFromViewProjectScreen={!isTeam} tableDetails={props.projectToDisplay}></AppBarTable>
+        <AppBarTable isTeamFromViewProjectScreen={isTeam} isMemberFromViewProjectScreen={!isTeam} tableDetails={props.projectToDisplay} makeDeleteMemberFromProject={props.makeDeleteMemberFromProject}></AppBarTable>
     </div>
   );
 }

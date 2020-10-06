@@ -90,8 +90,8 @@ function MemberScreen(props) {
 
 
   const getTeamNamesQueryCompleted = (data) =>{
-    if(data.getTeams){
-      dispatch({type:TEAM_NAMES_FOR_NEW_MEMBER,payload:data.getTeams})
+    if(data.getTeamsAndMembers){
+      dispatch({type:TEAM_NAMES_FOR_NEW_MEMBER,payload:data.getTeamsAndMembers})
     } 
   }
 

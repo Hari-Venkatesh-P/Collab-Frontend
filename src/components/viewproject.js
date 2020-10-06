@@ -4,8 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { green } from '@material-ui/core/colors';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
-import CardMedia from '@material-ui/core/CardMedia';
-import IconButton from '@material-ui/core/IconButton';
+
 import Typography from '@material-ui/core/Typography';
 import { useQuery , useMutation  } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
@@ -37,8 +36,8 @@ import MemberMenu from "./assignproject"
 
 import {GET_PROJECT_CORE_DETAILS_QUERY} from "../graphql/projects/projectquery"
 import {GET_TEAMS_NAMES_QUERY} from "../graphql/teams/teamquery"
-import {EDIT_PROJECT_MUTATION , DELETE_PROJECT_MUTATION , ASSIGN_PROJECT_TO_MEMBER_MUTATION} from "../graphql/projects/projectmutation"
-import {GET_PROJECT_CORE_DETAILS, EDIT_PROJECT , ASSIGN_PROJECTS_TO_MEMBER} from "../redux/actions/ProjectActions";
+import {EDIT_PROJECT_MUTATION , DELETE_PROJECT_MUTATION , ASSIGN_PROJECT_TO_MEMBER_MUTATION , UPDATE_PROJECT_STATUS_MUTATION, DELETE_MEMBER_FROM_PROJECT_MUTATION } from "../graphql/projects/projectmutation"
+import {GET_PROJECT_CORE_DETAILS, EDIT_PROJECT , ASSIGN_PROJECTS_TO_MEMBER , UPDATE_PROJECT_STATUS , REMOVE_MEMBER_FROM_PROJECT} from "../redux/actions/ProjectActions";
 import { TEAM_NAMES_FOR_NEW_MEMBER} from "../redux/actionstrings";
 
 const useStyles = makeStyles({
@@ -96,8 +95,22 @@ export default function ViwProject(props) {
     const handleAssignClose = () => {
         setAssignTeamId('')
         setAssignDialogOpen(false);
-        console.log(assign_project)
     };
+
+    const [comment, setCommment] = useState('');
+    const [commentDialogOpen, setCommmentDialogOpen] = useState(false);
+
+    const handleCommentClose = () => {
+        setCommment('')
+        setProjectStatus('')
+        setCommmentDialogOpen(false);
+    };
+
+    const [viewCommentDialog,setViewCommentDialog] = useState(false)
+    const handleViewCommentDialog = () => {
+        setViewCommentDialog(false);
+    };
+
 
     const handleClose = () => {
         // setEditDescription('')
@@ -109,7 +122,6 @@ export default function ViwProject(props) {
 
     const dispatch = useDispatch()
     const projectDataFromStore = useSelector(state=>state.projectReducer.projects)
-    console.log(projectDataFromStore)
     const assign_project = useSelector(state=>state.projectReducer.assign_project)
     const teamsAndMembers = useSelector(state=>state.teamReducer.existingTeams)
     var projectToDisplay = {}
@@ -119,19 +131,15 @@ export default function ViwProject(props) {
        }
     })
 
-    console.log(projectToDisplay)
-    
     if(assignTeamId){
         teamsAndMembers.map((team)=>{
             if(team._id == assignTeamId){
                 teamNames = team.team_members
             }
         })
-        console.log(teamNames)
     }
 
     const getTeamsandNamesQueryCompleted = (data) =>{
-        console.log(data)
         if(data.getTeamsAndMembers){
             dispatch({type:TEAM_NAMES_FOR_NEW_MEMBER,payload: data.getTeamsAndMembers})
         }
@@ -187,7 +195,6 @@ export default function ViwProject(props) {
     const makeEditMutation = () =>{
       EditProjectMutation({ variables: { id:props.viewId,start_date:editStartDate,end_date:editEndDate,description:editDescription } })
       .then(result=>{
-          console.log(result)
           if(result.data){
               NotificationManager.success("Project details edited",'Success',3000);
               dispatch({type:EDIT_PROJECT,payload:{id:props.viewId,start_date:editStartDate,end_date:editEndDate,description:editDescription}})
@@ -195,7 +202,6 @@ export default function ViwProject(props) {
           }
       })
       .catch((res) => {
-        console.log(res)
           res.graphQLErrors.map((error) => {
             if(error.message.startsWith("Database Error: ")){
              NotificationManager.error(error.message,'Error',4000);
@@ -234,11 +240,9 @@ export default function ViwProject(props) {
         AssignProject({ variables: { projectId:props.viewId,teamId:assign_project.teamId,memberId:assign_project.memberId } })
         .then(result=>{
             if(result.data){
-                console.log(result.data)
                 handleAssignClose()
                 dispatch({type:ASSIGN_PROJECTS_TO_MEMBER,payload:{id:props.viewId,data:result.data.assignProjectToMember}})
                 NotificationManager.success("Project Assigned",'Success',3000);
-                // window.location.href = "/"
             }
         })
         .catch((res) => {
@@ -251,6 +255,56 @@ export default function ViwProject(props) {
         });
         });
       } 
+
+
+      const [UpdateProjectStatusMutation,  updateProjectMutationData ] = useMutation(UPDATE_PROJECT_STATUS_MUTATION);
+
+      const makeUpdateStatusMutation = () =>{
+        UpdateProjectStatusMutation({ variables: { id:props.viewId,status:projectStatus,created_by:"5f7ae7666ed6c48f7038d2b8",content:comment } })
+        .then(result=>{
+            if(result.data){
+                NotificationManager.success("Status Marked as "+projectStatus,'Success',3000);
+                dispatch({type:UPDATE_PROJECT_STATUS,payload:{data:result.data.updateProjectStatus}})
+                handleCommentClose()
+            }
+        })
+        .catch((res) => {
+            res.graphQLErrors.map((error) => {
+              if(error.message.startsWith("Database Error: ")){
+               NotificationManager.error(error.message,'Error',4000);
+              }else{
+               NotificationManager.warning(error.message,'Warning',3000);
+              }
+        });
+        });
+      } 
+
+      const checkStatusType = () =>{
+        if(projectStatus === "COMPLETED"){
+            makeUpdateStatusMutation()
+        }else if (projectStatus === "DELAYED"){
+            setCommmentDialogOpen(true)
+        }else{
+            alert("Kindly select a status to update !")
+        }
+  }
+  const [DeleteMemberFromProject,  deleteMemberFromProjectMutation ] = useMutation(DELETE_MEMBER_FROM_PROJECT_MUTATION);
+
+  const makeDeleteMemberFromProject = (memberId) =>{
+    if(memberId){
+      DeleteMemberFromProject({ variables: { id:props.viewId,memberId:memberId } })
+      .then(result=>{
+          if(result.data){
+              NotificationManager.success("Member Deleted Successfully",'Success',3000);
+             dispatch({type:REMOVE_MEMBER_FROM_PROJECT,payload:{ id:props.viewId,memberid:memberId }})
+             console.log(projectDataFromStore)
+          }
+      })
+      .catch((res) => {
+            console.log(res)
+      });
+    }
+    }
 
       const  renderTeamSelectMenu = () =>{
         return(
@@ -267,8 +321,76 @@ export default function ViwProject(props) {
          
         )
       }
+
     return (
       <div>
+          <Dialog open={viewCommentDialog} onClose={handleViewCommentDialog}
+                    >
+                        <DialogTitle id="alert-dialog-title" style={{color:"#4863c7"}}>{"COMMENTS FOR PROJECTS :"}</DialogTitle>
+                        <DialogContent>
+                            {
+                                projectToDisplay?.coredetails?.comments?.map((comment)=>{
+                                    return(
+                                    <Box style={{backgroundColor:"lightblue"}} m={1} p={1}>
+                                        <Box display="flex" flexDirection="row" justifyContent="flex-start" >
+                                            <Box p={1} >
+                                                <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{comment.content} </Typography>
+                                            </Box>
+                                        </Box>
+                                        <Box display="flex" flexDirection="row" justifyContent="flex-start" >
+                                            <Box p={1} >
+                                                <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{comment.created_by?.name} </Typography>
+                                            </Box>
+                                            <Box p={1} >
+                                                <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{comment.created_by?.team?.name} </Typography>
+                                            </Box>
+                                            <Box p={1} >
+                                                <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{new Date(comment.created_at).toDateString()}</Typography>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                    )
+                                })
+                            }
+                        </DialogContent>
+                </Dialog>
+          <Dialog open={commentDialogOpen} onClose={handleCommentClose}
+                    >
+                        <DialogTitle id="alert-dialog-title" style={{color:"#4863c7"}}>{"COMMENTS FOR PROJECT DELAY :"}</DialogTitle>
+                        <DialogContent>
+                        <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
+                            <Box p={1} >
+                              <InputLabel htmlFor="component-simple"  style={{color:"black"}}>COMMENT CONTENT </InputLabel>
+                            </Box>
+                            <Box p={1} >
+                                <TextField error={ (comment === "") ? true :false}
+                                    onChange={(e)=>{setCommment(e.target.value)}}
+                                    value={comment}
+                                    multiline={true}
+                                    rows={3}
+                                    id="standard-error-helper-text"
+                                    placeholder="Comment Content"
+                                    helperText={(comment==="") ? "Comment is mandatory" : ""}
+                                />
+                            </Box>
+                        </Box>
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={handleCommentClose}  variant="outlined"
+                        color="primary"
+                        size="large"
+                        className={classes.button}
+                        startIcon={<CancelIcon />}> Cancel </Button>
+                        <Button 
+                        onClick={()=>{makeUpdateStatusMutation()}}
+                          variant="contained"
+                        color="primary"
+                        size="large"
+                         disabled = { comment=="" ? true : false}
+                        className={classes.button}
+                        startIcon={<SaveIcon />}> Save </Button>
+                    </DialogActions>
+                </Dialog>
             <Dialog open={assignDialogOpen} onClose={handleAssignClose}
                     >
                         <DialogTitle id="alert-dialog-title" >{"ASSIGNING PROJECT TO MEMBER :"}</DialogTitle>
@@ -449,6 +571,14 @@ export default function ViwProject(props) {
                             DELETE PROJECT
                         </Button>
                     </Box>
+                    <Box p={1} >
+                        <Button variant="outlined" color="primary" className={classes.button} 
+                                startIcon={<CommentTwoToneIcon />} 
+                                onClick={()=>{setViewCommentDialog(true)}}
+                        >
+                            GET COMMENTS 
+                        </Button>
+                    </Box>
                 </Box>
                 <Card className={classes.root} style={{backgroundColor:"lightblue"}}>
                     <CardContent  className={classes.content}>
@@ -471,24 +601,17 @@ export default function ViwProject(props) {
                     </CardContent>
                 </Card>
                 <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
-                    <Box p={1} >
-                        <Button variant="outlined" color="primary" className={classes.button} 
-                                startIcon={<CommentTwoToneIcon />} 
-                                onClick={()=>{setOpen(true)}}
-                        >
-                            GET COMMENTS 
-                        </Button>
-                    </Box>
+                    
                     <Box p={1} >
                         <Button variant="outlined" color="primary" className={classes.button} 
                                 startIcon={<EditIcon />} 
-                                onClick={()=>{setOpen(true)}}
+                                onClick={()=>{checkStatusType()}}
                         >
                             UPDATE STATUS 
                         </Button>
                     </Box>
                 </Box>   
-                <ViewProjectAppBar projectToDisplay={projectToDisplay}></ViewProjectAppBar>   
+                <ViewProjectAppBar projectToDisplay={projectToDisplay} makeDeleteMemberFromProject={makeDeleteMemberFromProject}></ViewProjectAppBar>   
           </div>
         );
     }

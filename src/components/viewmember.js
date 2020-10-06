@@ -2,8 +2,7 @@ import React , {useEffect, useState} from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import IconButton from '@material-ui/core/IconButton';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 import Typography from '@material-ui/core/Typography';
 import { useQuery , useMutation  } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
@@ -23,7 +22,7 @@ import MemberAppBar from "../components/memberappbar"
 
 import {GET_MEMBER_CORE_DETAILS_QUERY} from "../graphql/members/memberquery"
 import {GET_MEMBER_CORE_DETAILS} from "../redux/actions/memberActions"
-import {EDIT_MEMBER_MUTATION} from "../graphql/members/membermutation"
+import {EDIT_MEMBER_MUTATION , RESET_MEMBER_PASSWORD} from "../graphql/members/membermutation"
 import {EDIT_MEMBER} from "../redux/actionstrings"
 
 
@@ -115,6 +114,17 @@ export default function ViewMember(props) {
     };
 
 
+    const [currentPassword,setCurrentPassword] = useState('')
+    const [newPassword,setNewPassword] = useState('')
+    const [resetPassDialog,setResetDialogOpen] = useState(false) 
+
+    const handleResetDialog = () => {
+        setCurrentPassword('')
+        setNewPassword('')
+        setResetDialogOpen(false);
+    };
+
+
     const [EditMemberMutation,  editMemberMutationData ] = useMutation(EDIT_MEMBER_MUTATION);
 
     const makeEditMutation = () =>{
@@ -137,9 +147,41 @@ export default function ViewMember(props) {
       });
     } 
 
+    const [ResetPasswordMutation,  editresetPassData ] = useMutation(RESET_MEMBER_PASSWORD);
+
+    const makeResetPasswordMutation = () =>{
+        ResetPasswordMutation({ variables: { id:props.viewId,currentpassword:currentPassword,newpassword:newPassword } })
+      .then(result=>{
+          if(result.data){
+              NotificationManager.success("Password Reset done. !",'Success',3000);
+              handleResetDialog()
+          }
+      })
+      .catch((res) => {
+          res.graphQLErrors.map((error) => {
+            if(error.message.startsWith("Database Error: ")){
+             NotificationManager.error(error.message,'Error',4000);
+            }else{
+             NotificationManager.warning(error.message,'Warning',3000);
+            }
+      });
+      });
+    } 
+    var passwordPattern = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{6,12}$")
+
+    const doPasswordValidation = (txt)=> {
+        if(txt === ""){
+          return "Password is mandatory"
+        }
+        else if (!passwordPattern.test(txt)){
+          return "6 to 12 characters, 1 upper caseletter, 1 lowercase, 1 numeric digit"
+        }else{
+          return ""
+        }
+      }
     return (
       <div>
-           <Dialog open={open} onClose={handleClose}
+                <Dialog open={open} onClose={handleClose}
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
                     >
@@ -197,6 +239,57 @@ export default function ViewMember(props) {
                         color="primary"
                         size="large"
                          disabled = {(editName === "" || editAddress ==="" ||getMobileHelperText(editMobile) !=="" ) ? true : false}
+                        className={classes.button}
+                        startIcon={<SaveIcon />}> Save </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={resetPassDialog} onClose={handleResetDialog}
+                                    aria-labelledby="alert-dialog-title"
+                                    aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title" >{"PASSWORD RESET :"}</DialogTitle>
+                        <DialogContent>
+                        <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
+                            <Box p={1} >
+                              <InputLabel htmlFor="component-simple"  style={{color:"black"}}> CURRENT PASSWORD </InputLabel>
+                            </Box>
+                            <Box p={1} >
+                                <TextField error={ (currentPassword === "") ? true :false}
+                                    onChange={(e)=>{setCurrentPassword(e.target.value)}}
+                                    value={currentPassword}
+                                    id="standard-error-helper-text"
+                                    placeholder="Member Name "
+                                helperText={(currentPassword==="") ? "Current Password is mandatory" : ""}
+                                />
+                            </Box>
+                        </Box>
+                        <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
+                            <Box p={1} >
+                              <InputLabel htmlFor="component-simple"  style={{color:"black"}}> NEW PASSWORD </InputLabel>
+                            </Box>
+                            <Box p={1} >
+                                <TextField error={ (doPasswordValidation(newPassword) !=="") ? true :false}
+                                    onChange={(e)=>{setNewPassword(e.target.value)}}
+                                    value={newPassword}
+                                    id="standard-error-helper-text"
+                                    placeholder="Member Name "
+                                helperText={doPasswordValidation(newPassword)}
+                                />
+                            </Box>
+                        </Box>
+                        <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
+                        </Box>
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={handleResetDialog}  variant="outlined"
+                        color="primary"
+                        size="large"
+                        className={classes.button}
+                        startIcon={<CancelIcon />}> Cancel </Button>
+                        <Button onClick={makeResetPasswordMutation}  variant="contained"
+                        color="primary"
+                        size="large"
+                         disabled = {(currentPassword === "" ||doPasswordValidation(newPassword) !=="" ) ? true : false}
                         className={classes.button}
                         startIcon={<SaveIcon />}> Save </Button>
                     </DialogActions>
@@ -272,6 +365,15 @@ export default function ViewMember(props) {
             </CardContent>
           </Card>
           <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
+            <Box p={1} >
+              <Button variant="outlined" color="primary"
+                      className={classes.button}
+                      startIcon={<LockOpenIcon />}
+                       onClick={()=>{setResetDialogOpen(true)}}
+              >
+                  PASSWORD RESET
+              </Button>
+            </Box>
             <Box p={1} >
               <Button variant="outlined" color="primary"
                       className={classes.button}

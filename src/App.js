@@ -1,53 +1,16 @@
 import React from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { ApolloClient, ApolloProvider  } from '@apollo/client';
-import { split } from 'apollo-link';
-import { HttpLink } from 'apollo-link-http';
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { WebSocketLink } from '@apollo/client/link/ws';
-import { getMainDefinition } from 'apollo-utilities';
 import {Provider} from 'react-redux';
 import {NotificationContainer} from 'react-notifications';
-
 import Store from "../src/redux/index"
-
 import TaskScreen from "../src/screens/projectscreen";
 import TeamScreen from "../src/screens/teamscreen";
 import MemberScreen from "../src/screens/memberscreen"
+import client from "../src/graphql/index"
 
 function App() {
 
-  const httpLink = new HttpLink({
-    uri: 'http://localhost:4000/graphql',
-});
-
-const wsLink = new WebSocketLink({
-    uri: `ws://localhost:4000/graphql`,
-    options: {
-      reconnect: true
-    }
-});
-
-const link = split(
-    ({ query }) => {
-      const definition = getMainDefinition(query);
-      return (
-        definition.kind === 'OperationDefinition' &&
-        definition.operation === 'subscription'
-      );
-    },
-   wsLink,
-    httpLink,
-  );
-  
-
-  
-const client = new ApolloClient({
-    link: link,
-    cache: new InMemoryCache({
-    })
-});
-  
   return (
     <div className="App">
       <NotificationContainer/>

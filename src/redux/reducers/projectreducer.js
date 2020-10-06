@@ -1,11 +1,22 @@
-import {GET_PROJECT_BASIC_DETAILS , ADD_NEW_PROJECT , GET_PROJECT_CORE_DETAILS , EDIT_PROJECT , ASSIGN_PROJECTS , ASSIGN_PROJECTS_TO_MEMBER} from "../actions/ProjectActions";
+import {GET_PROJECT_BASIC_DETAILS ,
+   ADD_NEW_PROJECT ,
+   GET_PROJECT_CORE_DETAILS ,
+   EDIT_PROJECT ,
+   UPDATE_PROJECT_STATUS, 
+   ASSIGN_PROJECTS , 
+   ASSIGN_PROJECTS_TO_MEMBER,
+    GET_TEAM_PROJECTS,
+    REMOVE_MEMBER_FROM_PROJECT,
+     GET_MEMBER_PROJECTS} from "../actions/ProjectActions";
 
 const initialState = {
     projects : [],
     assign_project : {
       memberId : "",
       teamId : ""
-    }
+    },
+    teamProjects : [],
+    memberProjects : [] 
 };
 
 export const projectReducer = (state = initialState, action) => {
@@ -75,6 +86,58 @@ export const projectReducer = (state = initialState, action) => {
             }
           })
         }
+    }
+    case GET_TEAM_PROJECTS : {
+      return {
+        ...state,
+        teamProjects : action.payload
+      }
+    }
+    case GET_MEMBER_PROJECTS : {
+      return {
+        ...state,
+        memberProjects : action.payload
+      }
+    }
+    case UPDATE_PROJECT_STATUS :{
+      return{
+        ...state,
+        projects : state.projects.map((project)=>{
+          if(project._id === action.payload.data._id){
+              return{
+                ...project,
+                status : action.payload.data.status,
+                coredetails :{
+                  ...project.coredetails,
+                  comments : [...action.payload.data.comments]
+                }
+              }
+          }else{
+            return{
+              ...project,
+            }
+          }
+        })
+      }
+    }case REMOVE_MEMBER_FROM_PROJECT :{
+      return{
+        ...state,
+        projects : state.projects.map((project)=>{
+          if(project._id === action.payload.id){
+              return{
+                ...project,
+                coredetails :{
+                  ...project.coredetails,
+                  member_assigned : project.coredetails.member_assigned.filter((member)=>member._id !=action.payload.memberid )
+                }
+              }
+          }else{
+            return{
+              ...project
+            }
+          }
+        })
+      }
     }
       default:
         return state;

@@ -47,4 +47,27 @@ mutation  deleteProject($projectId:ID!,$teamId:ID!,$memberId:ID!){
 }`;
 
 
-export {ADD_NEW_PROJECT_MUTATION , EDIT_PROJECT_MUTATION , DELETE_PROJECT_MUTATION ,ASSIGN_PROJECT_TO_MEMBER_MUTATION}
+const UPDATE_PROJECT_STATUS_MUTATION =  gql`
+mutation  updateProjectStatus($id:ID!,$status:String!,$created_by:ID!,$content:String){
+  updateProjectStatus(id:$id,status:$status,created_by:$created_by,content:$content){
+    title,
+   _id,
+   status,
+    comments{
+      content,
+      created_at,
+      created_by{
+        name
+        team{
+          name
+        }
+      }
+    }
+  }
+}`;
+
+const DELETE_MEMBER_FROM_PROJECT_MUTATION =  gql`
+  mutation deleteMemberFromProject($id:ID!,$memberId:ID!){
+  deleteMemberFromProject(id:$id,memberId:$memberId)
+}`;
+export {ADD_NEW_PROJECT_MUTATION , EDIT_PROJECT_MUTATION , DELETE_PROJECT_MUTATION ,DELETE_MEMBER_FROM_PROJECT_MUTATION,ASSIGN_PROJECT_TO_MEMBER_MUTATION,UPDATE_PROJECT_STATUS_MUTATION}
