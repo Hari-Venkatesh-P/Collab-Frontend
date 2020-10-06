@@ -44,7 +44,6 @@ export default function ViewTeam(props) {
        }
    })
    
-   console.log(teamDataToDisplay)
    
     
     const getTeamsCoreDetailsQueryCompleted = (data) =>{

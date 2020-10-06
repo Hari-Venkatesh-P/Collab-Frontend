@@ -68,11 +68,9 @@ export default function ViewMember(props) {
        }
     })
 
-    console.log(memberToDisplay)
 
     const getMemberCoreDetailsCompleted = (data) =>{
         if(data.getMemberById && !error && !loading){
-            console.log( data.getMemberById )
             dispatch({type:GET_MEMBER_CORE_DETAILS,payload:{data : data.getMemberById , id : props.viewId}})
         }
     }
@@ -113,7 +111,6 @@ export default function ViewMember(props) {
         setEditName('')
         setEditMobile('')
         setEditAddress('')
-        console.log(open)
         setOpen(false);
     };
 
@@ -123,7 +120,6 @@ export default function ViewMember(props) {
     const makeEditMutation = () =>{
       EditMemberMutation({ variables: { id:props.viewId,name:editName,mobile:editMobile,address:editAddress } })
       .then(result=>{
-          console.log(result)
           if(result.data){
               NotificationManager.success("Details Updated Successfully",'Success',3000);
               dispatch({type:EDIT_MEMBER,payload:{id:props.viewId,name:editName,address:editAddress,mobile:editMobile}})
@@ -131,7 +127,6 @@ export default function ViewMember(props) {
           }
       })
       .catch((res) => {
-        console.log(res)
           res.graphQLErrors.map((error) => {
             if(error.message.startsWith("Database Error: ")){
              NotificationManager.error(error.message,'Error',4000);
@@ -148,7 +143,7 @@ export default function ViewMember(props) {
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
                     >
-                        <DialogTitle id="alert-dialog-title" >{"EDIT MEMBER DETAILS :"}</DialogTitle>
+                        <DialogTitle id="alert-dialog-title" >{"EDITING  MEMBER DETAILS :"}</DialogTitle>
                         <DialogContent>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
                             <Box p={1} >

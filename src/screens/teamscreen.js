@@ -64,7 +64,6 @@ function TeamScreen(props) {
 
     const toggleToTeamCoreDetailsView = (id) =>{
         if(id){
-            console.log("Setting View Id")
             setViewId(id)
         }
         setBasicView(!basicView)
@@ -85,7 +84,6 @@ function TeamScreen(props) {
     const makeAddEventMutation = () =>{
         AddTeam({ variables: { name:newTeamName,description:newTeamDescription,speciality:newTeamSpeciality  } })
         .then(result=>{
-            console.log(result)
             if(result.data.createTeam){
                 NotificationManager.success(" New Team "+ newTeamName +" is created",'Success',3000);
                 dispatch({type:ADD_NEW_TEAM,payload:result.data.createTeam})
@@ -109,7 +107,6 @@ function TeamScreen(props) {
          );
     } 
     if (error){
-        console.log(error)
         return(
             <div>
                 <NavBar></NavBar>
@@ -125,7 +122,7 @@ function TeamScreen(props) {
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
                     >
-                    <DialogTitle id="alert-dialog-title" >{"Creating a new team !!"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title" >{"CREATING A NEW TEAM!!"}</DialogTitle>
                         <DialogContent>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
                                 <Box p={1} >

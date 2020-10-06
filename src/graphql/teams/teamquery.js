@@ -34,10 +34,14 @@ query getTeamById($id: ID!){
 
 const GET_TEAMS_NAMES_QUERY =  gql`
 query{
-    getTeams{
-      _id,
+  getTeamsAndMembers{
       name,
-    }
+       _id,
+       team_members{
+         _id,
+         name
+       }
+     }
 }`;
 
 export { GET_TEAMS_QUERY ,GET_TEAMS_NAMES_QUERY, GET_TEAM_COREDETAILS_QUERY}

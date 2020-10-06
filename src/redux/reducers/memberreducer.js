@@ -11,7 +11,6 @@ export const memberReducer = (state = initialState, action) => {
       case ADD_NEW_MEMBER:
         return { ...state, members: [...state.members,action.payload] };
       case DELETE_MEMBER:{
-        state.members.map((member)=>{console.log(member._id != action.payload.id)})
         return { 
           ...state, 
           members: state.members.filter((member)=>member._id != action.payload.id)
@@ -35,7 +34,6 @@ export const memberReducer = (state = initialState, action) => {
         }
       }
       case EDIT_MEMBER : {
-        console.log(action.payload)
         return {
           ...state,
           members : state.members.map((member=>{

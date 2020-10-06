@@ -76,13 +76,12 @@ export default function DataTable(props) {
         })
        }if(!props.isTeam &&  props.tableDetails.length!=0 ){
         return props.tableDetails.map((member,idx) => {
-          console.log(member)
           return(
             <StyledTableRow key={member?.name} >
                 <StyledTableCell component="th" scope="row" onClick={()=>{props.onRowClick(member._id)}}> {member?.name} </StyledTableCell>
                 <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.mobile}</StyledTableCell>
                 <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.email}</StyledTableCell>
-                <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.team.name}</StyledTableCell>
+                <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.team.name.toString().toUpperCase()}</StyledTableCell>
                 <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.project_count}</StyledTableCell>
                     <IconButton edge="start"
                       className={classes.menuButton}

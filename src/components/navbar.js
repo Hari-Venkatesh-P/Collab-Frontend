@@ -209,12 +209,12 @@ export default function NavBar(props) {
                 <ListItemText primary={"Projects"} />
             </ListItem>
             <Divider />
-            <ListItem button key={"Teams"} onClick={()=>{history.replace("/teams")}}>
+            <ListItem button key={"Teams"} onClick={()=>{window.location.href ="/teams"}}>
                 <ListItemIcon><PeopleTwoToneIcon /></ListItemIcon>
                 <ListItemText primary={"Teams"} />
             </ListItem>
             <Divider />
-            <ListItem button key={"Members"} onClick={()=>{history.replace("/members")}}>
+            <ListItem button key={"Members"} onClick={()=>{window.location.href ="/members"}}>
                 <ListItemIcon><PermIdentityTwoToneIcon /></ListItemIcon>
                 <ListItemText primary={"Members"} />
             </ListItem>

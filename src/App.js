@@ -11,7 +11,7 @@ import {NotificationContainer} from 'react-notifications';
 
 import Store from "../src/redux/index"
 
-import TaskScreen from "../src/screens/taskscreen";
+import TaskScreen from "../src/screens/projectscreen";
 import TeamScreen from "../src/screens/teamscreen";
 import MemberScreen from "../src/screens/memberscreen"
 

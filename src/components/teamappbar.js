@@ -10,7 +10,7 @@ import AppBarTable from "../components/appbartable"
 export default function TeamAppBar(props) {
 
   const [showProject, setShowProject] = React.useState(false);
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(1);
 
   const setToggling = () =>{
     if(showProject){
@@ -44,7 +44,7 @@ export default function TeamAppBar(props) {
      
     </Paper>
       </div>
-     <AppBarTable isProject={showProject} isTeamMembers={!showProject} tableDetails={props.teamDetails}></AppBarTable>
+     <AppBarTable isProjectFromTeamScreen={showProject} isTeamMembersFromTeamScreen={!showProject} tableDetails={props.teamDetails}></AppBarTable>
 
     </div>
       

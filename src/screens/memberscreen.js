@@ -22,6 +22,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import Radio from '@material-ui/core/Radio';
+
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { GET_MEMBERS_QUERY} from "../graphql/members/memberquery"
@@ -45,10 +46,11 @@ function MemberScreen(props) {
     },
   }));
 
+  const classes = useStyles()
+
 
   const dispatch = useDispatch()  
   const memberData = useSelector(state=>state.memberReducer.members)
-  console.log(memberData)
   
   const [newMemberName,setNewMemberName] = useState('')
   const [newMemberEmail,setNewMemberEmail] = useState('')
@@ -73,6 +75,7 @@ function MemberScreen(props) {
   };
   const handleClose = () => {
       setNewMemberName('')
+      setNewTeamMemberAddress('')
       setNewMemberEmail('')
       setNewMemberMobile('')
       setOpen(false);
@@ -80,13 +83,11 @@ function MemberScreen(props) {
 
   const toggleToTeamCoreDetailsView = (id) =>{
       if(id){
-          console.log("Setting View Id")
           setViewId(id)
       }
       setBasicView(!basicView)
   }
 
-  const classes = useStyles()
 
   const getTeamNamesQueryCompleted = (data) =>{
     if(data.getTeams){
@@ -134,7 +135,7 @@ function MemberScreen(props) {
   const renderTeamSelectMenu = () =>{
     return(
       <FormControl error={newMemberTeam==="" ? true : false}>
-           <Select onChange={(e)=>{setNewMemberTeam(e.target.value);console.log(newMemberTeam)}}>
+           <Select onChange={(e)=>{setNewMemberTeam(e.target.value);}}>
           {
              Object.keys(existingTeams).map(function(key) {
               return <MenuItem  value={existingTeams[key]._id}>{existingTeams[key].name.toString().toUpperCase() } &nbsp; TEAM</MenuItem >
@@ -152,10 +153,8 @@ function MemberScreen(props) {
 
   const makeAddMemberMutation = () =>{
     var password = newMemberEmail.toString().slice(0,5)+newMemberMobile.toString().slice(newMemberMobile.toString().length - 3,newMemberMobile.toString().length)
-    console.log(password)
     AddMember({ variables: { name:newMemberName,email:newMemberEmail,mobile:newMemberMobile,password:password,team:newMemberTeam,dob:newTeamMemberDOB,address:newTeamMemberAddress,gender:newTeamMemberGender } })
     .then(result=>{
-        console.log(result)
         if(result.data.createMember){
             NotificationManager.success(" New Member "+ newMemberName +" is created",'Success',3000);
             dispatch({type:ADD_NEW_MEMBER,payload:result.data.createMember})
@@ -163,7 +162,6 @@ function MemberScreen(props) {
         }
     })
     .catch((res) => {
-      console.log(res)
         res.graphQLErrors.map((error) => {
           if(error.message.startsWith("Database Error: ")){
            NotificationManager.error(error.message,'Error',4000);
@@ -185,7 +183,6 @@ function MemberScreen(props) {
         }
     })
     .catch((res) => {
-      console.log(res)
         res.graphQLErrors.map((error) => {
           if(error.message.startsWith("Database Error: ")){
            NotificationManager.error(error.message,'Error',4000);
@@ -202,7 +199,6 @@ function MemberScreen(props) {
      );
   } 
   else if (error){
-    console.log(error)
     return(
         <div>
             <NavBar></NavBar>
@@ -217,7 +213,7 @@ function MemberScreen(props) {
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
                     >
-                    <DialogTitle id="alert-dialog-title" >{"Creating a new team !!"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title" >{"CREATING A NEW MEMBER :"}</DialogTitle>
                         <DialogContent>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
                           <Box p={1} >
@@ -278,11 +274,11 @@ function MemberScreen(props) {
                           <Box p={1} >
                              <DatePicker selected={newTeamMemberDOB} onChange={date => setNewTeamMemberDOB(date)} />                          </Box>
                           <Box p={1} >
-                              <InputLabel htmlFor="component-simple"  style={{color:"black"}}> Mobile  </InputLabel>
+                              <InputLabel htmlFor="component-simple"  style={{color:"black"}}> Gender  </InputLabel>
                           </Box>
                           <Box p={1} >
-                            <Radio   checked={newTeamMemberGender === 'male'} onChange={(e)=>{setNewTeamMemberGender(e.target.value)}} value="male" name="radio-button-demo" inputProps={{ 'aria-label': 'Male' }}/> MALE
-                            <Radio   checked={newTeamMemberGender === 'female'} onChange={(e)=>{setNewTeamMemberGender(e.target.value)}} value="female" name="radio-button-demo" inputProps={{ 'aria-label': 'Female' }}/> FEMALE
+                            <Radio   checked={newTeamMemberGender === 'Male'} onChange={(e)=>{setNewTeamMemberGender(e.target.value)}} value="Male" name="radio-button-demo" inputProps={{ 'aria-label': 'Male' }}/> MALE
+                            <Radio   checked={newTeamMemberGender === 'Female'} onChange={(e)=>{setNewTeamMemberGender(e.target.value)}} value="Female" name="radio-button-demo" inputProps={{ 'aria-label': 'Female' }}/> FEMALE
                           </Box>
                         </Box>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">

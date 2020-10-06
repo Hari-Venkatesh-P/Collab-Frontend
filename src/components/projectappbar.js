@@ -7,22 +7,21 @@ import PeopleTwoToneIcon from '@material-ui/icons/PeopleTwoTone';
 
 import AppBarTable from "../components/appbartable"
 
-export default function MemberAppBar(props) {
+export default function ProjectAppBar(props) {
 
-  const [showProject, setShowProject] = React.useState(true);
-  const [value, setValue] = React.useState(0);
+  const [showAssignedProject, setShowAssignedProjects] = React.useState(false);
+  const [value, setValue] = React.useState(1);
 
   const setToggling = () =>{
-    if(showProject){
+    if(showAssignedProject){
       setValue(1)
     }else{
       setValue(0)
     }
   }
 
-
   const handleChange = () => {
-    setShowProject(!showProject);
+    setShowAssignedProjects(!showAssignedProject);
     setToggling()
   };
   return (
@@ -35,17 +34,15 @@ export default function MemberAppBar(props) {
         indicatorColor="primary"
         textColor="primary"
         onChange={handleChange}
-        aria-label="disabled tabs example"
         centered
       >
-        <Tab label="Project Details" icon={<AssignmentLateTwoToneIcon />} />
-        <Tab label="Team Details" icon={<PeopleTwoToneIcon />}  />
+        <Tab label="PIPELINED PROJECTS" />
+        <Tab label="ONGOING PROJECTS"   />
       </Tabs>
-     
     </Paper>
       </div>
-     <AppBarTable isProjectFromMemberScreen={showProject} isTeamDetailsFromMemberScreen={!showProject} tableDetails={props.memberDetails}></AppBarTable>
-
+        <AppBarTable isAssignedProject={!showAssignedProject} isNewProjects={showAssignedProject} toggleView = {props.onRowClick} tableDetails={props.projectData}></AppBarTable>
     </div>
+      
   );
 }
