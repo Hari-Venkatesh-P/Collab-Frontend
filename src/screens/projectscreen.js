@@ -1,4 +1,4 @@
-import React , {useState} from 'react';
+import React , {useState , useEffect} from 'react';
 import { useQuery , useMutation  } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
@@ -30,6 +30,8 @@ import 'react-notifications/lib/notifications.css';
 import ProjectAppBar from "../components/projectappbar"
 import ViewProject from "../components/viewproject"
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import {isMemberLoggedIn} from "../Auth/authutils"
+
 
 function TaskScreen() {
 
@@ -56,6 +58,11 @@ function TaskScreen() {
     setDashBoardView(!dashboardView)
   }
 
+   useEffect(()=>{
+    console.log(sessionStorage.getItem('token'))
+    console.log(sessionStorage.getItem('id'))
+    isMemberLoggedIn()
+  })
 
   const handleClose = () => {
     setNewProjectTitle('')

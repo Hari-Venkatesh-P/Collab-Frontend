@@ -204,7 +204,7 @@ export default function NavBar(props) {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-            <ListItem button key={"Projects"} onClick={()=>{history.replace("/")}}>
+            <ListItem button key={"Projects"} onClick={()=>{history.replace("/projects")}}>
                 <ListItemIcon><AssignmentLateTwoToneIcon /> </ListItemIcon>
                 <ListItemText primary={"Projects"} />
             </ListItem>

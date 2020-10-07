@@ -39,5 +39,15 @@ mutation  resetPassword($id:ID!,$currentpassword:String!,$newpassword:String!){
   }  
 }`;
 
+const LOGIN_MEMBER =  gql`
+mutation  login($email:String!,$password:String!){
+  login(email:$email,password:$password){
+    name,
+    email,
+    _id,
+    role,
+    token
+  } 
+}`;
 
-export { ADD_NEW_MEMBER_MUTATION , DELETE_MEMBER_MUTATION , EDIT_MEMBER_MUTATION , RESET_MEMBER_PASSWORD}
+export { ADD_NEW_MEMBER_MUTATION , DELETE_MEMBER_MUTATION , EDIT_MEMBER_MUTATION , RESET_MEMBER_PASSWORD , LOGIN_MEMBER}
