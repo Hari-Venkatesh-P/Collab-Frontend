@@ -30,16 +30,20 @@ import 'react-notifications/lib/notifications.css';
 import ProjectAppBar from "../components/projectappbar"
 import ViewProject from "../components/viewproject"
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import {isMemberLoggedIn} from "../Auth/authutils"
+import {isMemberLoggedIn ,getLoggedInUserId} from "../Auth/authutils"
 
 
 function TaskScreen() {
 
+
+  var isMemberPresent
+  var userId = ""
+  
   const [newProjectTitle,setNewProjectTitle] = useState('')
   const [newProjectDescription,setNewProjectDescription] = useState('')
   const [newProjectStartDate,setNewProjectStartDate] = useState(new Date())
   const [newProjectEndDate,setNewProjectEndDate] = useState(new Date())
-
+  const [variables,setVariables] = useState({})
 
   
 
@@ -59,9 +63,10 @@ function TaskScreen() {
   }
 
    useEffect(()=>{
-    console.log(sessionStorage.getItem('token'))
-    console.log(sessionStorage.getItem('id'))
-    isMemberLoggedIn()
+    isMemberPresent = isMemberLoggedIn();
+    console.log(isMemberPresent)
+    userId = getLoggedInUserId();
+    console.log(userId)
   })
 
   const handleClose = () => {
@@ -114,7 +119,9 @@ function TaskScreen() {
    onCompleted:getAllProjectsByTeamCompleted
   });
 
-
+  if(userId!="" && isMemberPresent){
+    setVariables({id:userId})
+  }
 
   const getAllProjectsCompleted = (data) =>{
     if(data.getProjects){
@@ -122,10 +129,13 @@ function TaskScreen() {
     }      
   }
   
-  const { loading, error} = useQuery(GET_PROJECTS_QUERY,{
-    // pollInterval: 10000,
-   onCompleted:getAllProjectsCompleted
-  });
+
+    const { loading, error} = useQuery(GET_PROJECTS_QUERY,{
+      // pollInterval: 10000,
+      variables:{id:getLoggedInUserId()},
+     onCompleted:getAllProjectsCompleted
+    });
+  
 
 
   
@@ -162,7 +172,7 @@ function TaskScreen() {
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
                     >
-                    <DialogTitle id="alert-dialog-title" >{"CREATING A NEW PROJECT :"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title" style={{color:"blue"}}>{"CREATING A NEW PROJECT !!"}</DialogTitle>
                         <DialogContent>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
                           <Box p={1} >
@@ -239,7 +249,9 @@ function TaskScreen() {
                           {
                              dashboardView && 
                              <div style={{margin:"2%"}}>
-                               <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
+                               { !(isMemberLoggedIn())  &&
+                                 <React.Fragment>
+                                      <Box display="flex" justifyContent="flex-end"  bgcolor="background.paper">
                                     <Box p={1} >
                                         <Button variant="outlined"
                                                 color="primary"
@@ -251,6 +263,9 @@ function TaskScreen() {
                                         </Button>
                                     </Box>
                                 </Box>
+                                 </React.Fragment>
+                               }
+                               
                                 <Box display="flex" justifyContent="flex-end" m={1}>
                                           <IndeterminateCheckBoxIcon style={{color:"#e0d15a"}} ></IndeterminateCheckBoxIcon> ASSIGNED
                                           <IndeterminateCheckBoxIcon style={{color:"#849650"}} ></IndeterminateCheckBoxIcon> COMPLETED
@@ -282,12 +297,20 @@ function TaskScreen() {
                                     <MenuItem value="TEAMS">TEAMS</MenuItem>
                                   </Select>
                                 </Box>
-                                <Box m={1}>
-                                    <CloudDownloadIcon style={{color:"blue"}}></CloudDownloadIcon>   
-                                </Box>
-                                <Box m={1} >
-                                  <CSVLink data={projectData} filename={"projects.csv"}> &nbsp;Download Report </CSVLink>
-                                </Box>
+                                {
+                                  !(isMemberLoggedIn()) &&
+                                  <React.Fragment>
+                                       <Box m={1}>
+                                        <CloudDownloadIcon style={{color:"blue"}}></CloudDownloadIcon>   
+                                      </Box>
+                                      <Box m={1} >
+                                        <CSVLink data={projectData} filename={"projects.csv"}> &nbsp;Download Report </CSVLink>
+                                      </Box>
+
+                                  </React.Fragment> 
+                                     
+                                }
+                                
                               </Box>
                               <ProjectAppBar  projectData={projectData} onRowClick={toggleView} ></ProjectAppBar>
                              </div>

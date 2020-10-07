@@ -25,6 +25,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import AssignmentLateTwoToneIcon from '@material-ui/icons/AssignmentLateTwoTone';
 import PeopleTwoToneIcon from '@material-ui/icons/PeopleTwoTone';
 import PermIdentityTwoToneIcon from '@material-ui/icons/PermIdentityTwoTone';
+import { isMemberLoggedIn } from '../Auth/authutils';
 
 const useStyles = makeStyles((theme) => ({
     list: {
@@ -133,8 +134,12 @@ export default function NavBar(props) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      {
+        isMemberLoggedIn() &&  <MenuItem onClick={handleMenuClose}>MY  PROFILE</MenuItem>
+
+      }
+
+      <MenuItem onClick={handleMenuClose}>LOGOUT</MenuItem>
     </Menu>
   );
 
@@ -149,14 +154,6 @@ export default function NavBar(props) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="secondary">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
       <MenuItem>
         <IconButton aria-label="show 11 new notifications" color="inherit">
           <Badge badgeContent={11} color="secondary">
@@ -206,17 +203,17 @@ export default function NavBar(props) {
       <List>
             <ListItem button key={"Projects"} onClick={()=>{history.replace("/projects")}}>
                 <ListItemIcon><AssignmentLateTwoToneIcon /> </ListItemIcon>
-                <ListItemText primary={"Projects"} />
+                <ListItemText primary={"PROJECTS"} />
             </ListItem>
             <Divider />
             <ListItem button key={"Teams"} onClick={()=>{window.location.href ="/teams"}}>
                 <ListItemIcon><PeopleTwoToneIcon /></ListItemIcon>
-                <ListItemText primary={"Teams"} />
+                <ListItemText primary={"TEAMS"} />
             </ListItem>
             <Divider />
             <ListItem button key={"Members"} onClick={()=>{window.location.href ="/members"}}>
                 <ListItemIcon><PermIdentityTwoToneIcon /></ListItemIcon>
-                <ListItemText primary={"Members"} />
+                <ListItemText primary={isMemberLoggedIn() ? "COLLEAGES" : "MEMBERS"} />
             </ListItem>
             <Divider />
       </List>
@@ -239,28 +236,10 @@ export default function NavBar(props) {
                 </React.Fragment>
           
           <Typography className={classes.title} variant="h6" noWrap>
-          Collab
+          Collabs
           </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
             <IconButton aria-label="show 17 new notifications" color="inherit">
               <Badge badgeContent={17} color="secondary">
                 <NotificationsIcon />

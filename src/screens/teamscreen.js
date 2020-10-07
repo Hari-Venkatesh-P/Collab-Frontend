@@ -16,7 +16,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-
+import {isMemberLoggedIn} from "../Auth/authutils"
 
 import DataTable from "../components/table"
 import ViewTeam from "../components/viewteams"
@@ -122,17 +122,18 @@ function TeamScreen(props) {
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
                     >
-                    <DialogTitle id="alert-dialog-title" >{"CREATING A NEW TEAM!!"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title" style={{color:"blue"}}>{"CREATING A NEW TEAM !!"}</DialogTitle>
                         <DialogContent>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
                                 <Box p={1} >
                                     <InputLabel htmlFor="component-simple"  style={{color:"black"}}>Name</InputLabel>
                                         <TextField error={ (newTeamName === "") ? true :false}
                                         value = {newTeamName}
+                                        autoFocus={true}
                                         onChange={(e)=>{setNewTeamName(e.target.value)}}
                                         id="standard-error-helper-text"
                                         placeholder="Team Name"
-                                        helperText="Team Name is Mandatory"
+                                        helperText={newTeamName === "" ? "Team Name is Mandatory" : ""}
                                         />
                                 </Box>
                                 <Box p={1} >
@@ -142,7 +143,7 @@ function TeamScreen(props) {
                                         onChange={(e)=>{setNewTeamSpeciality(e.target.value)}}
                                         id="standard-error-helper-text"
                                         placeholder="Team Speciality"
-                                        helperText="Team Speciality is Mandatory"
+                                        helperText={newTeamSpeciality === "" ? "Team Speciality is Mandatory" : ""}
                                     />
                                 </Box>
                             </Box>
@@ -179,8 +180,11 @@ function TeamScreen(props) {
                 <div  style={{margin:"3%"}}>
                   {
                       basicView &&
-                        <div>
-                                <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
+                        <div> 
+                            {
+                                !(isMemberLoggedIn()) && 
+                                <React.Fragment>
+                                        <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
                                     <Box p={1} >
                                         <Button variant="outlined"
                                                 color="primary"
@@ -192,6 +196,8 @@ function TeamScreen(props) {
                                         </Button>
                                     </Box>
                                 </Box>
+                                </React.Fragment>
+                            }
                                 <DataTable isTeam={true} tableDetails={teamData.teams} onRowClick={toggleToTeamCoreDetailsView}></DataTable>
                         </div>  
                   } 

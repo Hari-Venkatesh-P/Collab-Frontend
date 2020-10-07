@@ -26,7 +26,7 @@ function isMemberLoggedIn(){
 
 function getLoggedInUserId(){
     const payloadFromToken = retrievePayloadFromToken()
-    if(payloadFromToken.id){
+    if(payloadFromToken.id && payloadFromToken.role==="MEMBER"){
         return payloadFromToken.id
     }
 }

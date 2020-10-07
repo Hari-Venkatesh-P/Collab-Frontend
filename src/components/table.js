@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
-
+import {isMemberLoggedIn} from "../Auth/authutils"
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -52,7 +52,10 @@ export default function DataTable(props) {
         )
       })
     }else{
-        headings = ['Member Name' ,'Mobile', 'Email' ,'Team', 'Total Projects', 'Delete']
+        headings = ['Member Name' ,'Mobile', 'Email' ,'Team', 'Total Projects']
+        if(!(isMemberLoggedIn())){
+          headings.push('Delete')
+        } 
         return headings.map((heading,idx) => {
           return(
             <StyledTableCell key={Math.random()}>{heading}</StyledTableCell>
@@ -83,10 +86,15 @@ export default function DataTable(props) {
                 <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.email}</StyledTableCell>
                 <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.team.name.toString().toUpperCase()}</StyledTableCell>
                 <StyledTableCell align="left" onClick={()=>{props.onRowClick(member._id)}}>{member?.project_count}</StyledTableCell>
-                    <IconButton edge="start"
+                    {
+                      !(isMemberLoggedIn()) && 
+                      <React.Fragment>
+                            <IconButton edge="start"
                       className={classes.menuButton}
                       color="inherit"
                       aria-label="Delete Icon"><DeleteIcon onClick={()=>{props.makeDeletememberMutation(member._id)}}/></IconButton>
+                      </React.Fragment>
+                    }
             </StyledTableRow>
           )
         })

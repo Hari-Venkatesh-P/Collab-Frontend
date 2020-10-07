@@ -23,8 +23,8 @@ import Select from '@material-ui/core/Select';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import Radio from '@material-ui/core/Radio';
 
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import {MuiPickersUtilsProvider,KeyboardDatePicker,} from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';import "react-datepicker/dist/react-datepicker.css";
 import { GET_MEMBERS_QUERY} from "../graphql/members/memberquery"
 import {GET_TEAMS_NAMES_QUERY} from "../graphql/teams/teamquery"
 import {ADD_NEW_MEMBER_MUTATION , DELETE_MEMBER_MUTATION} from "../graphql/members/membermutation"
@@ -33,6 +33,7 @@ import DataTable from "../components/table"
 import NavBar from "../components/navbar" 
 import Loader from "../components/loader"
 import ViewMember from "../components/viewmember"
+import {isMemberLoggedIn} from "../Auth/authutils";
 
 function MemberScreen(props) {
 
@@ -78,6 +79,7 @@ function MemberScreen(props) {
       setNewTeamMemberAddress('')
       setNewMemberEmail('')
       setNewMemberMobile('')
+      setNewTeamMemberGender('')
       setOpen(false);
   };
 
@@ -213,7 +215,7 @@ function MemberScreen(props) {
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
                     >
-                    <DialogTitle id="alert-dialog-title" >{"CREATING A NEW MEMBER :"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title" style={{color:"blue"}}>{"CREATING A NEW MEMBER :"}</DialogTitle>
                         <DialogContent>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
                           <Box p={1} >
@@ -222,6 +224,7 @@ function MemberScreen(props) {
                           <Box p={1} >
                             <TextField error={ (newMemberName === "") ? true :false}
                                 onChange={(e)=>{setNewMemberName(e.target.value)}}
+                                autoFocus={true}
                                 value={newMemberName}
                                 id="standard-error-helper-text"
                                  placeholder="Member Name "
@@ -271,13 +274,22 @@ function MemberScreen(props) {
                           <Box p={1} >
                               <InputLabel htmlFor="component-simple"  style={{color:"black"}}> DOB  </InputLabel>
                           </Box>
-                          <Box p={1} >
-                             <DatePicker selected={newTeamMemberDOB} onChange={date => setNewTeamMemberDOB(date)} />                          </Box>
+                          <Box >
+                          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                  <KeyboardDatePicker margin="normal" id="date-picker-dialog" 
+                                      label="Event Date"format="dd/MM/yyyy"
+                                      value={newTeamMemberDOB}
+                                      onChange={(date)=>{setNewTeamMemberDOB(date)}}
+                                      KeyboardButtonProps={{'aria-label': 'change date'}}/>
+                              </MuiPickersUtilsProvider>   
+                              </Box>
                           <Box p={1} >
                               <InputLabel htmlFor="component-simple"  style={{color:"black"}}> Gender  </InputLabel>
                           </Box>
                           <Box p={1} >
                             <Radio   checked={newTeamMemberGender === 'Male'} onChange={(e)=>{setNewTeamMemberGender(e.target.value)}} value="Male" name="radio-button-demo" inputProps={{ 'aria-label': 'Male' }}/> MALE
+                          </Box>
+                          <Box p={1} >
                             <Radio   checked={newTeamMemberGender === 'Female'} onChange={(e)=>{setNewTeamMemberGender(e.target.value)}} value="Female" name="radio-button-demo" inputProps={{ 'aria-label': 'Female' }}/> FEMALE
                           </Box>
                         </Box>
@@ -322,8 +334,10 @@ function MemberScreen(props) {
                 <div  style={{margin:"3%"}}>
                   {
                       basicView &&
-                        <div>
-                              <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
+                        <div> 
+                          {  !(isMemberLoggedIn()) &&
+                            <React.Fragment>
+                                <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
                                     <Box p={1} >
                                         <Button variant="outlined"
                                                 color="primary"
@@ -335,6 +349,8 @@ function MemberScreen(props) {
                                         </Button>
                                     </Box>
                                 </Box>
+                            </React.Fragment>
+                          }
                                 <DataTable  isTeam={false} tableDetails={memberData}  onRowClick={toggleToTeamCoreDetailsView} makeDeletememberMutation={makeDeletememberMutation}></DataTable>
                         </div>  
                   } 

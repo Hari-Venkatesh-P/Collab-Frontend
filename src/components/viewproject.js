@@ -39,6 +39,7 @@ import {GET_TEAMS_NAMES_QUERY} from "../graphql/teams/teamquery"
 import {EDIT_PROJECT_MUTATION , DELETE_PROJECT_MUTATION , ASSIGN_PROJECT_TO_MEMBER_MUTATION , UPDATE_PROJECT_STATUS_MUTATION, DELETE_MEMBER_FROM_PROJECT_MUTATION } from "../graphql/projects/projectmutation"
 import {GET_PROJECT_CORE_DETAILS, EDIT_PROJECT , ASSIGN_PROJECTS_TO_MEMBER , UPDATE_PROJECT_STATUS , REMOVE_MEMBER_FROM_PROJECT} from "../redux/actions/ProjectActions";
 import { TEAM_NAMES_FOR_NEW_MEMBER} from "../redux/actionstrings";
+import { isMemberLoggedIn,getLoggedInUserId} from "../Auth/authutils"
 
 const useStyles = makeStyles({
     root: {
@@ -111,13 +112,14 @@ export default function ViwProject(props) {
         setViewCommentDialog(false);
     };
 
+    const [deleteDialog,setDeleteDialog] = useState(false)
 
-    const handleClose = () => {
-        // setEditDescription('')
-        // setEditStartDate(new Date())
-        // setEditEndDate(new Date())
-        setOpen(false);
-    };
+    // const handleClose = () => {
+    //     // setEditDescription('')
+    //     // setEditStartDate(new Date())
+    //     // setEditEndDate(new Date())
+    //     setOpen(false);
+    // };
     const [projectStatus,setProjectStatus] = React.useState('')
 
     const dispatch = useDispatch()
@@ -219,7 +221,7 @@ export default function ViwProject(props) {
         .then(result=>{
             if(result.data){
                 NotificationManager.success("Project Deleted",'Success',3000);
-                window.location.href = "/"
+                window.location.href = "/projects"
             }
         })
         .catch((res) => {
@@ -260,7 +262,7 @@ export default function ViwProject(props) {
       const [UpdateProjectStatusMutation,  updateProjectMutationData ] = useMutation(UPDATE_PROJECT_STATUS_MUTATION);
 
       const makeUpdateStatusMutation = () =>{
-        UpdateProjectStatusMutation({ variables: { id:props.viewId,status:projectStatus,created_by:"5f7ae7666ed6c48f7038d2b8",content:comment } })
+        UpdateProjectStatusMutation({ variables: { id:props.viewId,status:projectStatus,created_by:"5f7dc30409a73edbb4db25ef",content:comment } })
         .then(result=>{
             if(result.data){
                 NotificationManager.success("Status Marked as "+projectStatus,'Success',3000);
@@ -367,6 +369,7 @@ export default function ViwProject(props) {
                                     onChange={(e)=>{setCommment(e.target.value)}}
                                     value={comment}
                                     multiline={true}
+                                    autoFocus={true}
                                     rows={3}
                                     id="standard-error-helper-text"
                                     placeholder="Comment Content"
@@ -387,6 +390,24 @@ export default function ViwProject(props) {
                         color="primary"
                         size="large"
                          disabled = { comment=="" ? true : false}
+                        className={classes.button}
+                        startIcon={<SaveIcon />}> Save </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={deleteDialog} onClose={()=>{setDeleteDialog(false)}}
+                    >
+                        <DialogTitle id="alert-dialog-title" style={{color:"#4863c7"}}>{"ARE YOU SURE TO DELETE THE PROJECT "+projectToDisplay.title+" :"}</DialogTitle>
+                        <DialogActions>
+                        <Button onClick={()=>{setDeleteDialog(false)}}  variant="outlined"
+                        color="primary"
+                        size="large"   
+                        className={classes.button}
+                        startIcon={<CancelIcon />}> Cancel </Button>
+                        <Button 
+                        onClick={()=>{makeDeleteMutation()}}
+                          variant="contained"
+                        color="primary"
+                        size="large"
                         className={classes.button}
                         startIcon={<SaveIcon />}> Save </Button>
                     </DialogActions>
@@ -434,7 +455,7 @@ export default function ViwProject(props) {
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
                     >
-                        <DialogTitle id="alert-dialog-title" >{"EDITING  MEMBER DETAILS :"}</DialogTitle>
+                        <DialogTitle id="alert-dialog-title"  style={{color:"blue"}}>{"EDIT  PROJECT DETAILS :"}</DialogTitle>
                         <DialogContent>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
                             <Box p={1} >
@@ -442,6 +463,7 @@ export default function ViwProject(props) {
                             </Box>
                             <Box p={1} >
                                 <TextField error={ (editDescription === "") ? true :false}
+                                   autoFocus={true}
                                     onChange={(e)=>{setEditDescription(e.target.value)}}
                                     value={editDescription}
                                     id="standard-error-helper-text"
@@ -543,6 +565,8 @@ export default function ViwProject(props) {
                     </CardContent>
                 </Card>
                 <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
+                    { !(isMemberLoggedIn()) &&
+                    <React.Fragment>
                     <Box p={1} >
                         <Button variant="outlined" color="primary" className={classes.button} 
                                 startIcon={<EditIcon />} 
@@ -563,14 +587,13 @@ export default function ViwProject(props) {
                         <Button variant="outlined" color="primary" className={classes.button} 
                                 startIcon={<DeleteIcon />} 
                                 onClick={()=>{ 
-                                    if(props.viewId){
-                                        makeDeleteMutation()
-                                    }
+                                    setDeleteDialog(true)
                                 }}
                         >
                             DELETE PROJECT
                         </Button>
                     </Box>
+                    </React.Fragment>}
                     <Box p={1} >
                         <Button variant="outlined" color="primary" className={classes.button} 
                                 startIcon={<CommentTwoToneIcon />} 
@@ -580,7 +603,10 @@ export default function ViwProject(props) {
                         </Button>
                     </Box>
                 </Box>
-                <Card className={classes.root} style={{backgroundColor:"lightblue"}}>
+                {
+                    (isMemberLoggedIn()) &&
+                    <React.Fragment>
+                            <Card className={classes.root} style={{backgroundColor:"lightblue"}}>
                     <CardContent  className={classes.content}>
                             <Box display="flex" flexDirection="row" justifyContent="flex-start"  >
                                 <Box display="flex" flexDirection="row" justifyContent="flex-start" >
@@ -610,7 +636,9 @@ export default function ViwProject(props) {
                             UPDATE STATUS 
                         </Button>
                     </Box>
-                </Box>   
+                </Box>
+                </React.Fragment>
+                }
                 <ViewProjectAppBar projectToDisplay={projectToDisplay} makeDeleteMemberFromProject={makeDeleteMemberFromProject}></ViewProjectAppBar>   
           </div>
         );

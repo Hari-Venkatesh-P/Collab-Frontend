@@ -9,6 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
+import {isMemberLoggedIn} from "../Auth/authutils";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -93,7 +94,10 @@ export default function AppBarTable(props) {
         )
       })
      }else if(props.isMemberFromViewProjectScreen){
-      headings = ['NAME' , 'EMAIL','MOBILE','REMOVE']
+      headings = ['NAME' , 'EMAIL','MOBILE']
+      if(!isMemberLoggedIn()){
+        headings.push('REMOVE')
+      }
       return headings.map((heading,idx) => {
         return(
         <StyledTableCell key={Math.random()}>{heading}</StyledTableCell>
@@ -210,9 +214,16 @@ export default function AppBarTable(props) {
             </StyledTableCell>
             <StyledTableCell align="left">{member.email}</StyledTableCell>
             <StyledTableCell align="left">{member.mobile}</StyledTableCell>
-            <IconButton edge="start"
+            {
+              !(isMemberLoggedIn()) &&
+              <React.Fragment>
+                <IconButton edge="start"
                       color="inherit"
                       aria-label="Delete Icon"><DeleteIcon onClick={()=>{props.makeDeleteMemberFromProject(member._id)}}/></IconButton>
+              </React.Fragment>
+            }
+            
+            
           </StyledTableRow>
           )
         })

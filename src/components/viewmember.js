@@ -24,7 +24,7 @@ import {GET_MEMBER_CORE_DETAILS_QUERY} from "../graphql/members/memberquery"
 import {GET_MEMBER_CORE_DETAILS} from "../redux/actions/memberActions"
 import {EDIT_MEMBER_MUTATION , RESET_MEMBER_PASSWORD} from "../graphql/members/membermutation"
 import {EDIT_MEMBER} from "../redux/actionstrings"
-
+import { isMemberLoggedIn , getLoggedInUserId} from "../Auth/authutils"
 
 
 const useStyles = makeStyles({
@@ -45,6 +45,9 @@ const useStyles = makeStyles({
   });
 
 export default function ViewMember(props) {
+
+    var isMemberPresent
+    var userId
 
     useEffect(()=>{
         console.log(" View Core Details of member  renedered "+props.viewId)
@@ -185,7 +188,7 @@ export default function ViewMember(props) {
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
                     >
-                        <DialogTitle id="alert-dialog-title" >{"EDITING  MEMBER DETAILS :"}</DialogTitle>
+                        <DialogTitle id="alert-dialog-title"  style={{color:"black"}} >{"EDIT MEMBER DETAILS :"}</DialogTitle>
                         <DialogContent>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
                             <Box p={1} >
@@ -365,7 +368,10 @@ export default function ViewMember(props) {
             </CardContent>
           </Card>
           <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
-            <Box p={1} >
+              {
+                  isMemberLoggedIn() &&
+                  <React.Fragment>
+                        <Box p={1} >
               <Button variant="outlined" color="primary"
                       className={classes.button}
                       startIcon={<LockOpenIcon />}
@@ -374,6 +380,8 @@ export default function ViewMember(props) {
                   PASSWORD RESET
               </Button>
             </Box>
+                  </React.Fragment>
+              }
             <Box p={1} >
               <Button variant="outlined" color="primary"
                       className={classes.button}
