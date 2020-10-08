@@ -4,7 +4,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AssignmentLateTwoToneIcon from '@material-ui/icons/AssignmentLateTwoTone';
 import PeopleTwoToneIcon from '@material-ui/icons/PeopleTwoTone';
-
+import { isMemberLoggedIn , getLoggedInUserId} from "../Auth/authutils"
 import AppBarTable from "../components/appbartable"
 
 export default function MemberAppBar(props) {
@@ -35,11 +35,10 @@ export default function MemberAppBar(props) {
         indicatorColor="primary"
         textColor="primary"
         onChange={handleChange}
-        aria-label="disabled tabs example"
         centered
       >
-        <Tab label="Project Details" icon={<AssignmentLateTwoToneIcon />} />
-        <Tab label="Team Details" icon={<PeopleTwoToneIcon />}  />
+        <Tab label={ (props.isProfileScreen) ? "My Projects" : (!isMemberLoggedIn()) ? "Projects of Member" : "Projects of Colleague" } icon={<AssignmentLateTwoToneIcon />} />
+        <Tab label={ (props.isProfileScreen) ? "My Team" : (!isMemberLoggedIn()) ? "Team of Member" : "Team of Colleague" } icon={<PeopleTwoToneIcon />}  />
       </Tabs>
      
     </Paper>

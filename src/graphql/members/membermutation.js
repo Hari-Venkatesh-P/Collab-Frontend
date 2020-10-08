@@ -44,8 +44,14 @@ mutation  login($email:String!,$password:String!){
   login(email:$email,password:$password){
     name,
     email,
+    address,
+    gender,
     _id,
-    role,
+    mobile,
+    dob,
+    team{
+      name
+    }
     token
   } 
 }`;

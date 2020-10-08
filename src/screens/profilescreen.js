@@ -19,14 +19,13 @@ import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import { NotificationManager} from 'react-notifications';
 import MemberAppBar from "../components/memberappbar"
-
-import {GET_MEMBER_CORE_DETAILS_QUERY} from "../graphql/members/memberquery"
-import {GET_MEMBER_CORE_DETAILS} from "../redux/actions/memberActions"
-import {EDIT_MEMBER_MUTATION } from "../graphql/members/membermutation"
-import {EDIT_MEMBER} from "../redux/actionstrings"
+import NavBar from "../components/navbar"
+import {GET_LOGGED_IN_MEMBER__DETAILS_MUTATION} from "../graphql/members/memberquery"
+import {GET_LOGGED_IN_MEMBER_DETAILS , EDIT_LOGGED_IN_MEMBER } from "../redux/actions/memberActions"
+import {EDIT_MEMBER_MUTATION , RESET_MEMBER_PASSWORD} from "../graphql/members/membermutation"
 import { isMemberLoggedIn , getLoggedInUserId} from "../Auth/authutils"
-
-
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 const useStyles = makeStyles({
     root: {
       minWidth: 500,
@@ -44,45 +43,69 @@ const useStyles = makeStyles({
     },
   });
 
-export default function ViewMember(props) {
+export default function ProfileScreen(props) {
 
     useEffect(()=>{
-        console.log(" View Core Details of member  renedered "+props.viewId)
     })
+
+    const dispatch = useDispatch()
+    const memberToDisplay = useSelector(state=> state.memberReducer.loggedInMember)
+
+    console.log(memberToDisplay)
+
 
     const [editName,setEditName] = useState('') 
     const [editMobile,setEditMobile] = useState('') 
     const [editAddress,setEditAddress] = useState('') 
     const [open, setOpen] = useState(false);
 
-
-    const dispatch = useDispatch()
-    const memberDataFromStore = useSelector(state=>state.memberReducer.members)
-    var memberToDisplay = {}
-    memberDataFromStore.map((member)=>{
-        if(member._id === props.viewId && member.coredetails){
-         memberToDisplay = member
-        }
-     })
-    
+    const [visiblity,setVisiblity]  = useState(false)
+    const [showType,setShowtype] = useState('password')
 
 
-    const getMemberCoreDetailsCompleted = (data) =>{
-        if(data.getMemberById && !error && !loading){
-            dispatch({type:GET_MEMBER_CORE_DETAILS,payload:{data : data.getMemberById , id : props.viewId}})
-        }
+   const  handleVisiblity =  () => {
+    setVisiblity(!visiblity)
+    if(showType=="password"){
+      setShowtype("text")
+    }else{
+      setShowtype("password")
+    }
     }
 
-    const { loading, error} = useQuery(GET_MEMBER_CORE_DETAILS_QUERY,{
-        variables:{id:props.viewId},
-    // pollInterval: 10000,
-        onCompleted:getMemberCoreDetailsCompleted
-    });
-  
+    let icon = null; 
+    if (visiblity) {
+        icon = <VisibilityIcon style={{color:"blue",cursor:"pointer"}} onClick={()=>{handleVisiblity()}}/>;
+    } else {
+        icon = <VisibilityOffIcon  style={{color:"blue",cursor:"pointer"}} onClick={()=>{handleVisiblity()}}/>;
+    }
+
+
+    const [visiblityNew,setVisiblityNew]  = useState(false)
+    const [showTypeNew,setShowtypeNew] = useState('password')
+
+
+   const  handleVisiblityNew =  () => {
+    setVisiblityNew(!visiblityNew)
+    if(showTypeNew=="password"){
+        setShowtypeNew("text")
+    }else{
+        setShowtypeNew("password")
+    }
+    }
+
+    let iconNew = null; 
+    if (visiblityNew) {
+        iconNew = <VisibilityIcon style={{color:"blue",cursor:"pointer"}} onClick={()=>{handleVisiblityNew()}}/>;
+
+    } else {
+        iconNew = <VisibilityOffIcon  style={{color:"blue",cursor:"pointer"}} onClick={()=>{handleVisiblityNew()}}/>;
+
+
+    }
+
     const classes = useStyles();
     const theme = useTheme();
 
-    console.log(memberToDisplay)
     const getProjectsCount = (projects,status) => {
         var j = 0
         console.log(projects,status)
@@ -116,14 +139,25 @@ export default function ViewMember(props) {
     };
 
 
+    const [currentPassword,setCurrentPassword] = useState('')
+    const [newPassword,setNewPassword] = useState('')
+    const [resetPassDialog,setResetDialogOpen] = useState(false) 
+
+    const handleResetDialog = () => {
+        setCurrentPassword('')
+        setNewPassword('')
+        setResetDialogOpen(false);
+    };
+
+
     const [EditMemberMutation,  editMemberMutationData ] = useMutation(EDIT_MEMBER_MUTATION);
 
     const makeEditMutation = () =>{
-      EditMemberMutation({ variables: { id:props.viewId,name:editName,mobile:editMobile,address:editAddress } })
+      EditMemberMutation({ variables: { id:getLoggedInUserId(),name:editName,mobile:editMobile,address:editAddress } })
       .then(result=>{
           if(result.data){
               NotificationManager.success("Details Updated Successfully",'Success',3000);
-              dispatch({type:EDIT_MEMBER,payload:{id:props.viewId,name:editName,address:editAddress,mobile:editMobile}})
+              dispatch({type:EDIT_LOGGED_IN_MEMBER,payload:{name:editName,address:editAddress,mobile:editMobile}})
               handleClose()
           }
       })
@@ -138,6 +172,50 @@ export default function ViewMember(props) {
       });
     } 
 
+    const [ResetPasswordMutation,  editresetPassData ] = useMutation(RESET_MEMBER_PASSWORD);
+
+    const makeResetPasswordMutation = () =>{
+        ResetPasswordMutation({ variables: { id:getLoggedInUserId(),currentpassword:currentPassword,newpassword:newPassword } })
+      .then(result=>{
+          if(result.data){
+              NotificationManager.success("Password Reset done. !",'Success',3000);
+              handleResetDialog()
+          }
+      })
+      .catch((res) => {
+          res.graphQLErrors.map((error) => {
+            if(error.message.startsWith("Database Error: ")){
+             NotificationManager.error(error.message,'Error',4000);
+            }else{
+             NotificationManager.warning(error.message,'Warning',3000);
+            }
+      });
+      });
+    } 
+    var passwordPattern = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{6,12}$")
+
+    const doPasswordValidation = (txt)=> {
+        if(txt === ""){
+          return "Password is mandatory"
+        }
+        else if (!passwordPattern.test(txt)){
+          return "6 to 12 characters, 1 upper caseletter, 1 lowercase, 1 numeric digit"
+        }else{
+          return ""
+        }
+      }
+
+      const getLoggedInMemberDetailsCompleted = (data) =>{
+        if(data.getMemberById && !error && !loading){
+             dispatch({type:GET_LOGGED_IN_MEMBER_DETAILS,payload:data.getMemberById})
+        }
+    }
+
+    const { loading, error} = useQuery(GET_LOGGED_IN_MEMBER__DETAILS_MUTATION,{
+        variables:{id:getLoggedInUserId()},
+    // pollInterval: 10000,
+        onCompleted:getLoggedInMemberDetailsCompleted
+    });
 
     return (
       <div>
@@ -145,7 +223,7 @@ export default function ViewMember(props) {
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
                     >
-                        <DialogTitle id="alert-dialog-title"  style={{color:"#4863c7"}} >{"EDIT MEMBER DETAILS :"}</DialogTitle>
+                        <DialogTitle id="alert-dialog-title"  style={{color:"blue"}} >{"EDIT MEMBER DETAILS :"}</DialogTitle>
                         <DialogContent>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
                             <Box p={1} >
@@ -203,8 +281,68 @@ export default function ViewMember(props) {
                         startIcon={<SaveIcon />}> Save </Button>
                     </DialogActions>
                 </Dialog>
-                
-            <Card className={classes.root} style={{backgroundColor:"lightblue"}}>
+                <Dialog open={resetPassDialog} onClose={handleResetDialog}
+                                    aria-labelledby="alert-dialog-title"
+                                    aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title"  style={{color:"blue"}}>{"PASSWORD RESET :"}</DialogTitle>
+                        <DialogContent>
+                        <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
+                            <Box p={1} >
+                              <InputLabel htmlFor="component-simple"  style={{color:"black"}}> CURRENT PASSWORD </InputLabel>
+                            </Box>
+                            <Box p={1} >
+                                <TextField error={ (currentPassword === "") ? true :false}
+                                    onChange={(e)=>{setCurrentPassword(e.target.value)}}
+                                    type={showType}
+                                    value={currentPassword}
+                                    id="standard-error-helper-text"
+                                    placeholder="Current Password "
+                                    InputProps={{
+                                        endAdornment: icon
+                                      }}
+                                helperText={(currentPassword==="") ? "Current Password is mandatory" : ""}
+                                />
+                            </Box>
+                        </Box>
+                        <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
+                            <Box p={1} >
+                              <InputLabel htmlFor="component-simple"  style={{color:"black"}}> NEW PASSWORD &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</InputLabel>
+                            </Box>
+                            <Box p={1} >
+                                <TextField error={ (doPasswordValidation(newPassword) !=="") ? true :false}
+                                    onChange={(e)=>{setNewPassword(e.target.value)}}
+                                    value={newPassword}
+                                    type={showTypeNew}
+                                    id="standard-error-helper-text"
+                                    placeholder="New Password "
+                                    InputProps={{
+                                        endAdornment: iconNew
+                                      }}
+                                helperText={doPasswordValidation(newPassword)}
+                                />
+                            </Box>
+                        </Box>
+                        <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
+                        </Box>
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={handleResetDialog}  variant="outlined"
+                        color="primary"
+                        size="large"
+                        className={classes.button}
+                        startIcon={<CancelIcon />}> Cancel </Button>
+                        <Button onClick={makeResetPasswordMutation}  variant="contained"
+                        color="primary"
+                        size="large"
+                         disabled = {(currentPassword === "" ||doPasswordValidation(newPassword) !=="" ) ? true : false}
+                        className={classes.button}
+                        startIcon={<SaveIcon />}> Save </Button>
+                    </DialogActions>
+                </Dialog>
+                <NavBar></NavBar>
+                <div style={{margin:"2%"}}>
+                <Card className={classes.root} style={{backgroundColor:"lightblue"}}>
                 <CardContent className={classes.content}>
                     <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} >
                         <img src="https://image.shutterstock.com/image-vector/sample-stamp-grunge-texture-vector-260nw-1389188336.jpg"  width="80" height="130" ></img>
@@ -261,13 +399,13 @@ export default function ViewMember(props) {
                                 <Typography variant="h6" component="h6"  style={{color:"blue" ,fontSize:"15px"}} >Completed Projects </Typography>
                             </Box>
                             <Box m={1}>
-                                <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{getProjectsCount(memberToDisplay?.coredetails?.assigned_projects,"COMPLETED")} &nbsp; Project(s)</Typography>
+                                <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{getProjectsCount(memberToDisplay?.assigned_projects,"COMPLETED")} &nbsp; Project(s)</Typography>
                             </Box>
                             <Box m={1}>
                                 <Typography variant="h6" component="h6"  style={{color:"blue" ,fontSize:"15px"}} >Delayed Projects </Typography>
                             </Box>
                             <Box m={1}>
-                                <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{getProjectsCount(memberToDisplay?.coredetails?.assigned_projects,"DELAYED")} &nbsp; Project(s)</Typography>
+                                <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{getProjectsCount(memberToDisplay?.assigned_projects,"DELAYED")} &nbsp; Project(s)</Typography>
                             </Box>
                         </Box>
                   </Box>
@@ -275,9 +413,17 @@ export default function ViewMember(props) {
             </CardContent>
           </Card>
           <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
-              {
-                    (!(isMemberLoggedIn())) &&
-                    <React.Fragment>
+
+                        <Box p={1} >
+              <Button variant="outlined" color="primary"
+                      className={classes.button}
+                      startIcon={<LockOpenIcon />}
+                       onClick={()=>{setResetDialogOpen(true)}}
+              >
+                  PASSWORD RESET
+              </Button>
+            </Box>
+                
                             <Box p={1} >
                          <Button variant="outlined" color="primary"
                       className={classes.button}
@@ -287,11 +433,11 @@ export default function ViewMember(props) {
                   Edit Member Details
                     </Button>
                     </Box>
-                    </React.Fragment>
-              }
+                    
           </Box>
-          {memberToDisplay._id && <MemberAppBar memberDetails={memberToDisplay}></MemberAppBar>}
+          {memberToDisplay._id && <MemberAppBar memberDetails={memberToDisplay} isProfileScreen={true}></MemberAppBar>}
 
+                </div>
           </div>
   );
 }

@@ -33,7 +33,7 @@ import DataTable from "../components/table"
 import NavBar from "../components/navbar" 
 import Loader from "../components/loader"
 import ViewMember from "../components/viewmember"
-import {isMemberLoggedIn} from "../Auth/authutils";
+import {isMemberLoggedIn , getLoggedInUserId} from "../Auth/authutils";
 
 function MemberScreen(props) {
 
@@ -109,6 +109,7 @@ function MemberScreen(props) {
   }
   const { loading, error} = useQuery(GET_MEMBERS_QUERY,{
       // pollInterval: 10000,
+    variables:{id:getLoggedInUserId()},
      onCompleted:getMembersQueryCompleted
   });
 

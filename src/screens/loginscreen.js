@@ -1,5 +1,5 @@
 import React ,{useEffect , useState}from 'react';
-import { useMutation  } from '@apollo/client';
+import { useMutation   } from '@apollo/client';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -13,14 +13,37 @@ import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import { useHistory } from "react-router";
 import {LOGIN_MEMBER} from "../graphql/members/membermutation"
-
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import {useDispatch} from "react-redux"
 import {setTokens} from "../Auth/authutils"
 
 const LoginScreen = () =>{
 
     const history = useHistory();
+    const dispatch = useDispatch();
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
+    const [visiblity,setVisiblity]  = useState(false)
+    const [showType,setShowtype] = useState('password')
+
+
+   const  handleVisiblity =  () => {
+    setVisiblity(!visiblity)
+    if(showType=="password"){
+      setShowtype("text")
+    }else{
+      setShowtype("password")
+    }
+    }
+    let icon = null; 
+    if (visiblity) {
+        icon = <VisibilityIcon style={{color:"blue",cursor:"pointer"}} onClick={()=>{handleVisiblity()}}/>;
+    } else {
+        icon = <VisibilityOffIcon  style={{color:"blue",cursor:"pointer"}} onClick={()=>{handleVisiblity()}}/>;
+    }
+
+
     const [LoginMember,  addMemberMutationData ] = useMutation(LOGIN_MEMBER);
 
     const makeLoginMemberMutation = () =>{
@@ -28,7 +51,6 @@ const LoginScreen = () =>{
       .then(result=>{
           if(result.data.login){
               setTokens(result.data.login)
-              // NotificationManager.success(" New Member "+ newMemberName +" is created",'Success',3000);
               setEmail('')
               setPassword('')
               history.replace("/projects")
@@ -44,7 +66,8 @@ const LoginScreen = () =>{
       });
       });
     }
-
+    
+            
 
     return(
         <div>
@@ -59,7 +82,7 @@ const LoginScreen = () =>{
  >
 
   <Grid item xs={5}>
-  <Card style={{borderColor:"#d0d5db",borderStyle:"solid"}}>
+  <Card style={{borderColor:"#d0d5db",borderStyle:"solid",borderWidth:"5px"}}>
       <CardContent>
                     <Box display="flex" p={1} m={1} flexDirection="row" justifyContent="center"  >
                           <Box   style={{color:"blue"}}>
@@ -88,8 +111,12 @@ const LoginScreen = () =>{
                             <TextField error={ (password === "") ? true :false}
                                 onChange={(e)=>{setPassword(e.target.value)}}
                                 value={password}
+                                type={showType}
                                 id="standard-error-helper-text"
                                  placeholder="Password"
+                                 InputProps={{
+                                  endAdornment: icon
+                                }}
                                  helperText={(password==="") ? "Password is mandatory" : ""}
                              />
                           </Box>

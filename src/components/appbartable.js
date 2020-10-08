@@ -40,6 +40,7 @@ const useStyles = makeStyles({
 });
 
 export default function AppBarTable(props) {
+  console.log(props)
   const classes = useStyles();
 
    function renderHeading(){
@@ -82,6 +83,7 @@ export default function AppBarTable(props) {
     }else if(props.isProjectFromMemberScreen){
       headings = ['TITLE' , 'DESCRIPTION','START DATE','END DATE']
       return headings.map((heading,idx) => {
+        console.log(heading)
         return(
         <StyledTableCell key={Math.random()}>{heading}</StyledTableCell>
         )
@@ -176,10 +178,36 @@ export default function AppBarTable(props) {
             <StyledTableCell align="left">{props.tableDetails.coredetails.team.project_count}  &nbsp; PROJECTS</StyledTableCell>
           </StyledTableRow>
           )
+        }else{
+          if(props.tableDetails && props.tableDetails.team) {
+            return(
+              <StyledTableRow key={props.tableDetails.team.name} >
+              <StyledTableCell component="th" scope="row">
+                {props.tableDetails.team.name} &nbsp; TEAM 
+              </StyledTableCell>
+              <StyledTableCell align="left">{props.tableDetails.team.speciality}</StyledTableCell>
+              <StyledTableCell align="left">{props.tableDetails.team.team_strength} &nbsp; MEMBERS</StyledTableCell>
+              <StyledTableCell align="left">{props.tableDetails.team.project_count}  &nbsp; PROJECTS</StyledTableCell>
+            </StyledTableRow>
+            )
+          }
         }
        }else if(props.isProjectFromMemberScreen){
         if(props.tableDetails.coredetails && props.tableDetails.coredetails.assigned_projects) {
           return props.tableDetails.coredetails.assigned_projects.map((project,idx) => {
+            return(
+              <StyledTableRow key={project.title}>
+              <StyledTableCell component="th" scope="row">
+                {project.title}
+              </StyledTableCell>
+              <StyledTableCell align="left">{project.description}</StyledTableCell>
+              <StyledTableCell align="left">{new Date(project.start_date.toString()).toDateString()}</StyledTableCell>
+              <StyledTableCell align="left">{new Date(project.end_date.toString()).toDateString()}</StyledTableCell>
+            </StyledTableRow>
+            )
+          })
+        }else if(props.tableDetails.assigned_projects){
+          return props.tableDetails.assigned_projects.map((project,idx) => {
             return(
               <StyledTableRow key={project.title}>
               <StyledTableCell component="th" scope="row">

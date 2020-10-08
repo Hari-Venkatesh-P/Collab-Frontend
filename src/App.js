@@ -11,6 +11,7 @@ import ProjectScreen from "../src/screens/projectscreen";
 import TeamScreen from "../src/screens/teamscreen";
 import MemberScreen from "../src/screens/memberscreen"
 import LoginScreen from "../src/screens/loginscreen"
+import ProfileScreen from "../src/screens/profilescreen"
 
 function App() {
 
@@ -23,7 +24,8 @@ function App() {
           <Route exact path="/" component={LoginScreen} /> 
           <Route exact path="/projects" component={ProjectScreen} /> 
           <Route exact path="/teams" component={TeamScreen} /> 
-          <Route exact path="/members" component={MemberScreen} /> 
+          <Route exact path="/members" component={MemberScreen} />
+          <Route exact path="/profile" component={ProfileScreen} /> 
         </BrowserRouter>
         </Provider>
       </ApolloProvider>
