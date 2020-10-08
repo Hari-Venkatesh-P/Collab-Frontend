@@ -2,7 +2,6 @@ const base64 = require('base64url');
 
 function setTokens(payloadFromLogin){
     sessionStorage.setItem("token",payloadFromLogin.token)
-    sessionStorage.setItem("id",payloadFromLogin._id)
 }
 
 function retrievePayloadFromToken(){
@@ -24,6 +23,15 @@ function isMemberLoggedIn(){
     }
 }
 
+function isAdminLoggedIn(){
+    const payloadFromToken = retrievePayloadFromToken()
+    if(payloadFromToken && payloadFromToken.role==="ADMIN"){
+        return true
+    }else{
+        return false
+    }
+}
+
 function getLoggedInUserId(){
     const payloadFromToken = retrievePayloadFromToken()
     if(payloadFromToken.id && payloadFromToken.role==="MEMBER"){
@@ -34,5 +42,6 @@ function getLoggedInUserId(){
 module.exports = {
     isMemberLoggedIn,
     setTokens,
+    isAdminLoggedIn,
     getLoggedInUserId
 }

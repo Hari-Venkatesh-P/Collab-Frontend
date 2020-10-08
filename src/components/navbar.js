@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useEffect, useState} from 'react';
 import { useHistory } from "react-router";
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -26,10 +26,13 @@ import PermIdentityTwoToneIcon from '@material-ui/icons/PermIdentityTwoTone';
 import { isMemberLoggedIn } from '../Auth/authutils';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import {useSelector,useDispatch} from "react-redux" 
-import ViewMember from "../components/viewmember"
-// import viewMember
+import { NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
+import {TEAM_ADDED_SUBSCRIPTION} from  "../graphql/teams/teamsubscription"
+import {useSubscription } from "@apollo/client"
+import {CREATE_NOTICATION} from "../redux/actions/notificationActions"
 
-const useStyles = makeStyles((theme) => ({
+ const useStyles = makeStyles((theme) => ({
     list: {
         width: 250,
       },
@@ -100,8 +103,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function NavBar(props) {
+  const [notifications,setNotifications] = useState([])
+  const dispatch = useDispatch()
   const history = useHistory();
 
+  const { data, loading, error } = useSubscription(TEAM_ADDED_SUBSCRIPTION);
+
+  useEffect(()=>{
+    if(data){
+      setNotifications(notifications => [...notifications, data.teamAdded])
+    }
+  })
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -114,8 +126,8 @@ export default function NavBar(props) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const menuId = 'primary-search-account-menu';
 
+  const menuId = 'primary-search-account-menu';
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
     <Menu
@@ -127,12 +139,15 @@ export default function NavBar(props) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem >
-        <p>Notifications 1</p>
-      </MenuItem>
-      <MenuItem >
-        <p>Notifications 2</p>
-      </MenuItem>
+      {
+        notifications.map((noti)=>{
+          return(
+            <MenuItem >
+            <p>{noti}</p>
+            </MenuItem>
+          )
+        })
+      }
     </Menu>
   );
   const classes = useStyles();
@@ -200,11 +215,11 @@ export default function NavBar(props) {
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 17 new notifications" color="inherit" onClick={handleMobileMenuOpen}>
-              <Badge badgeContent={17} color="secondary">
+            <IconButton color="inherit" onClick={handleMobileMenuOpen}>
+              <Badge badgeContent={notifications.length} color="secondary">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> 
             {
               isMemberLoggedIn() &&
               <React.Fragment>
@@ -225,7 +240,6 @@ export default function NavBar(props) {
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              
               color="inherit"
             >
               <ExitToAppIcon />
