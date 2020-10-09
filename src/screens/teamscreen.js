@@ -2,6 +2,7 @@ import React ,{useEffect , useState}from 'react';
 import { useQuery , useMutation  } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
 import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import Dialog from '@material-ui/core/Dialog';
@@ -181,10 +182,14 @@ function TeamScreen(props) {
                   {
                       basicView &&
                         <div> 
+                            <Box display="flex" justifyContent="space-between" m={1} p={1} bgcolor="background.paper">
+                                <Box  >
+                                    <Typography variant="h3" component="h3"  style={{color:"blue" ,fontSize:"18px",fontFamily:"sans-serif"}} >{"TEAM DETAILS :"}</Typography>
+                                </Box>
+
                             {
                                 !(isMemberLoggedIn()) && 
                                 <React.Fragment>
-                                        <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
                                     <Box p={1} >
                                         <Button variant="outlined"
                                                 color="primary"
@@ -195,9 +200,9 @@ function TeamScreen(props) {
                                             Add New Team
                                         </Button>
                                     </Box>
-                                </Box>
                                 </React.Fragment>
                             }
+                            </Box>
                                 <DataTable isTeam={true} tableDetails={teamData.teams} onRowClick={toggleToTeamCoreDetailsView}></DataTable>
                         </div>  
                   } 

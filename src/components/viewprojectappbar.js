@@ -43,7 +43,7 @@ export default function ProjectAppBar(props) {
      
     </Paper>
       </div>
-        <AppBarTable isTeamFromViewProjectScreen={isTeam} isMemberFromViewProjectScreen={!isTeam} tableDetails={props.projectToDisplay} makeDeleteMemberFromProject={props.makeDeleteMemberFromProject}></AppBarTable>
+        <AppBarTable isTeamFromViewProjectScreen={isTeam} isMemberFromViewProjectScreen={!isTeam} tableDetails={props.projectToDisplay} deleteIconClicked={props.deleteIconClicked}></AppBarTable>
     </div>
   );
 }

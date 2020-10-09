@@ -7,7 +7,7 @@ import {GET_PROJECT_BASIC_DETAILS ,
    ASSIGN_PROJECTS_TO_MEMBER,
     GET_TEAM_PROJECTS,
     REMOVE_MEMBER_FROM_PROJECT,
-     GET_MEMBER_PROJECTS} from "../actions/ProjectActions";
+     GET_MEMBER_PROJECTS,RESET_PROJECT_STORE_DETAILS} from "../actions/ProjectActions";
 
 const initialState = {
     projects : [],
@@ -23,8 +23,10 @@ export const projectReducer = (state = initialState, action) => {
     switch (action.type) {
       case GET_PROJECT_BASIC_DETAILS:
         return { ...state, projects: action.payload };
+      case RESET_PROJECT_STORE_DETAILS:
+          return { ...state, projects: [] , assign_project : {memberId:"",teamId:""},teamProjects : [],memberProjects : [] };
       case ADD_NEW_PROJECT:
-        return { ...state, projects: [action.payload,...state.projects] };
+        return { ...state, projects: [action.payload,...state.projects] }; 
       case GET_PROJECT_CORE_DETAILS:
           return { 
             ...state, 

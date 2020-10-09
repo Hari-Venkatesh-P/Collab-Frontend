@@ -1,5 +1,5 @@
 import {GET_ALL_MEMBERS_BASIC_DETAILS , ADD_NEW_MEMBER , GET_MEMBER_CORE_DETAILS , DELETE_MEMBER , EDIT_MEMBER } from "../actionstrings"
-import {GET_LOGGED_IN_MEMBER_DETAILS , EDIT_LOGGED_IN_MEMBER} from "../actions/memberActions"
+import {GET_LOGGED_IN_MEMBER_DETAILS , EDIT_LOGGED_IN_MEMBER , RESET_MEMBER_STORE_DETAILS} from "../actions/memberActions"
 
 const initialState = {
     members : [],
@@ -9,7 +9,9 @@ const initialState = {
 export const memberReducer = (state = initialState, action) => {
     switch (action.type) {
       case GET_ALL_MEMBERS_BASIC_DETAILS:
-        return { ...state, members: action.payload };
+          return { ...state, members: action.payload };
+      case RESET_MEMBER_STORE_DETAILS:
+            return { ...state, members: [] , loggedInMember : {} }; 
       case GET_LOGGED_IN_MEMBER_DETAILS : {
         return {...state, loggedInMember : action.payload}
       }

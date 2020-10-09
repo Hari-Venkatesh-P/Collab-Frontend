@@ -1,6 +1,7 @@
 import React ,{useEffect , useState}from 'react';
 import { useQuery , useMutation  } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
+import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
@@ -151,6 +152,7 @@ function MemberScreen(props) {
     )
   }
 
+  
 
   const [AddMember,  addMemberMutationData ] = useMutation(ADD_NEW_MEMBER_MUTATION);
 
@@ -175,6 +177,20 @@ function MemberScreen(props) {
     });
   }
 
+
+  const [deleteId,setDeleteId] = useState('')
+  const [deleteDialog,setDeleteDialog] = useState(false)
+
+  const deleteIconClicked = (id) =>{
+    setDeleteId(id)
+    setDeleteDialog(true)
+  }
+
+  const handleDeleteDialogClosed = () =>{
+    setDeleteId('')
+    setDeleteDialog(false)
+  }
+
   const [DeleteMember,  deleteMemberMutationData ] = useMutation(DELETE_MEMBER_MUTATION);
 
   const makeDeletememberMutation = (id) =>{
@@ -183,6 +199,7 @@ function MemberScreen(props) {
         if(result.data){
             NotificationManager.success(" Member deleted successfully",'Success',3000);
             dispatch({type:DELETE_MEMBER,payload:{id:id}})
+            handleDeleteDialogClosed()
         }
     })
     .catch((res) => {
@@ -212,6 +229,24 @@ function MemberScreen(props) {
     return(
       <div>
            <NavBar></NavBar>
+           <Dialog open={deleteDialog} onClose={()=>{handleDeleteDialogClosed()}}
+                    >
+                        <DialogTitle id="alert-dialog-title" style={{color:"#4863c7"}}>{"ARE YOU SURE TO DELETE THE MEMBER ?"}</DialogTitle>
+                        <DialogActions>
+                        <Button onClick={()=>{setDeleteDialog(false)}}  variant="outlined"
+                        color="primary"
+                        size="large"   
+                        className={classes.button}
+                        startIcon={<CancelIcon />}> Cancel </Button>
+                        <Button 
+                        onClick={()=>{makeDeletememberMutation(deleteId)}}
+                          variant="contained"
+                        color="primary"
+                        size="large"
+                        className={classes.button}
+                        startIcon={<SaveIcon />}> Save </Button>
+                    </DialogActions>
+            </Dialog>
            <Dialog open={open} onClose={handleClose}
                                     aria-labelledby="alert-dialog-title"
                                     aria-describedby="alert-dialog-description"
@@ -336,10 +371,13 @@ function MemberScreen(props) {
                   {
                       basicView &&
                         <div> 
+                           <Box p={1} display="flex" justifyContent="space-between" bgcolor="background.paper" >
+                           <Box  >
+                              <Typography variant="h3" component="h3"  style={{color:"blue" ,fontSize:"18px",fontFamily:"sans-serif"}} >{isMemberLoggedIn() ? "COLLEAGUES DETAILS :" : "MEMBER DETAILS :"}</Typography>
+                            </Box>
                           {  !(isMemberLoggedIn()) &&
                             <React.Fragment>
-                                <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
-                                    <Box p={1} >
+                                    <Box  >
                                         <Button variant="outlined"
                                                 color="primary"
                                                 className={classes.button}
@@ -349,10 +387,10 @@ function MemberScreen(props) {
                                             Add New Member
                                         </Button>
                                     </Box>
-                                </Box>
                             </React.Fragment>
                           }
-                                <DataTable  isTeam={false} tableDetails={memberData}  onRowClick={toggleToTeamCoreDetailsView} makeDeletememberMutation={makeDeletememberMutation}></DataTable>
+                          </Box>
+                                <DataTable  isTeam={false} tableDetails={memberData}  onRowClick={toggleToTeamCoreDetailsView} deleteIconClicked={deleteIconClicked}></DataTable>
                         </div>  
                   } 
                   {

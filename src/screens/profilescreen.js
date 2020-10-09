@@ -342,6 +342,11 @@ export default function ProfileScreen(props) {
                 </Dialog>
                 <NavBar></NavBar>
                 <div style={{margin:"2%"}}>
+                <Box p={1} display="flex" justifyContent="space-between" bgcolor="background.paper" >
+                           <Box  >
+                              <Typography variant="h3" component="h3"  style={{color:"blue" ,fontSize:"18px",fontFamily:"sans-serif"}} >{"MY PROFILE :"}</Typography>
+                            </Box>
+                </Box>
                 <Card className={classes.root} style={{backgroundColor:"lightblue"}}>
                 <CardContent className={classes.content}>
                     <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} >

@@ -29,8 +29,12 @@ import {useSelector,useDispatch} from "react-redux"
 import { NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import {TEAM_ADDED_SUBSCRIPTION} from  "../graphql/teams/teamsubscription"
+import {MEMBER_ADDED_SUBSCRIPTION} from  "../graphql/members/membersubscriptions"
+import {PROJECT_ADDED_SUBSCRIPTION} from  "../graphql/projects/projectsubscription"
+import {RESET_MEMBER_STORE_DETAILS} from  "../redux/actions/memberActions"
+import {RESET_PROJECT_STORE_DETAILS} from  "../redux/actions/ProjectActions"
+import {RESET_TEAM_STORE_DETAILS} from  "../redux/actionstrings"
 import {useSubscription } from "@apollo/client"
-import {CREATE_NOTICATION} from "../redux/actions/notificationActions"
 
  const useStyles = makeStyles((theme) => ({
     list: {
@@ -104,22 +108,62 @@ import {CREATE_NOTICATION} from "../redux/actions/notificationActions"
 
 export default function NavBar(props) {
   const [notifications,setNotifications] = useState([])
-  const dispatch = useDispatch()
   const history = useHistory();
+  const dispatch = useDispatch()
 
-  const { data, loading, error } = useSubscription(TEAM_ADDED_SUBSCRIPTION);
-
-  useEffect(()=>{
-    if(data){
-      setNotifications(notifications => [...notifications, data.teamAdded])
+  function memberAddedSubscriptionCalled(data){
+    console.log(data)
+    if(data.subscriptionData.data.memberAdded){
+      setNotifications(["New Joinee :"+data.subscriptionData.data.memberAdded,...notifications])
+      if(isMemberLoggedIn()){
+        NotificationManager.info(data.subscriptionData.data.memberAdded,"New Joinee",3000)
+      }
     }
-  })
+  } 
+
+  
+  const {data : memberdata, loading : memberloading, error :membererror } = useSubscription(MEMBER_ADDED_SUBSCRIPTION,{
+    onSubscriptionData:memberAddedSubscriptionCalled
+   });
+
+
+   function projectDataSubscriptionCalled(data){
+    if(data.subscriptionData.data.projectAdded){
+      setNotifications(["New Project "+data.subscriptionData.data.projectAdded,...notifications])
+      if(isMemberLoggedIn()){
+        NotificationManager.info(data.subscriptionData.data.projectAdded,"New Project",3000)
+      }
+    }
+  } 
+
+  
+  const { data : projectData, loading : projectloading, error :projecterr} = useSubscription(PROJECT_ADDED_SUBSCRIPTION,{
+    onSubscriptionData:projectDataSubscriptionCalled
+   });
+
+
+   function teamAddedSubscriptionCalled(teamdata){
+    if(teamdata.subscriptionData.data.teamAdded){
+      setNotifications(["New Team "+teamdata.subscriptionData.data.teamAdded,...notifications])
+      if(isMemberLoggedIn()){
+        NotificationManager.info(teamdata.subscriptionData.data.teamAdded,"New Team",3000)
+      }
+    }
+  } 
+
+  
+  const { data : teamdata, loading : teamloading, error :teamerr} = useSubscription(TEAM_ADDED_SUBSCRIPTION,{
+    onSubscriptionData:teamAddedSubscriptionCalled
+   });
+
+
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
+    setNotifications([])
   };
 
   const handleMobileMenuOpen = (event) => {
@@ -150,6 +194,15 @@ export default function NavBar(props) {
       }
     </Menu>
   );
+
+  const handleLogout = () => {
+    dispatch({type:RESET_MEMBER_STORE_DETAILS})
+    dispatch({type:RESET_PROJECT_STORE_DETAILS})
+    dispatch({type:RESET_TEAM_STORE_DETAILS})
+    sessionStorage.removeItem("token")
+    window.location.href="/"
+  }
+
   const classes = useStyles();
   const [state, setState] = React.useState({
     top: false,
@@ -181,12 +234,12 @@ export default function NavBar(props) {
                 <ListItemText primary={"PROJECTS"} />
             </ListItem>
             <Divider />
-            <ListItem button key={"Teams"} onClick={()=>{window.location.href ="/teams"}}>
+            <ListItem button key={"Teams"} onClick={()=>{history.replace("/teams")}}>
                 <ListItemIcon><PeopleTwoToneIcon /></ListItemIcon>
                 <ListItemText primary={"TEAMS"} />
             </ListItem>
             <Divider />
-            <ListItem button key={"Members"} onClick={()=>{window.location.href ="/members"}}>
+            <ListItem button key={"Members"} onClick={()=>{history.replace("/members")}}>
                 <ListItemIcon><PermIdentityTwoToneIcon /></ListItemIcon>
                 <ListItemText primary={isMemberLoggedIn() ? "COLLEAGUES" : "MEMBERS"} />
             </ListItem>
@@ -240,6 +293,7 @@ export default function NavBar(props) {
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
+              onClick={()=>{handleLogout()}}
               color="inherit"
             >
               <ExitToAppIcon />

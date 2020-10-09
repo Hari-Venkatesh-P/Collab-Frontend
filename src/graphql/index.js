@@ -24,7 +24,7 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: "My X-Auth",
+      authorization: token || " ",
     }
   }
 });

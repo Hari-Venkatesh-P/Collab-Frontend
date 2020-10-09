@@ -92,7 +92,7 @@ export default function DataTable(props) {
                             <IconButton edge="start"
                       className={classes.menuButton}
                       color="inherit"
-                      aria-label="Delete Icon"><DeleteIcon onClick={()=>{props.makeDeletememberMutation(member._id)}}/></IconButton>
+                      aria-label="Delete Icon"><DeleteIcon onClick={()=>{props.deleteIconClicked(member._id)}}/></IconButton>
                       </React.Fragment>
                     }
             </StyledTableRow>

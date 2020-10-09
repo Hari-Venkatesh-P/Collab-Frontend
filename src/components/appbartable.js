@@ -247,7 +247,7 @@ export default function AppBarTable(props) {
               <React.Fragment>
                 <IconButton edge="start"
                       color="inherit"
-                      aria-label="Delete Icon"><DeleteIcon onClick={()=>{props.makeDeleteMemberFromProject(member._id)}}/></IconButton>
+                      aria-label="Delete Icon"><DeleteIcon onClick={()=>{props.deleteIconClicked(member._id)}}/></IconButton>
               </React.Fragment>
             }
             

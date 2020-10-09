@@ -290,6 +290,23 @@ export default function ViwProject(props) {
             alert("Kindly select a status to update !")
         }
   }
+
+
+  const [deleteMemberId,setDeleteMemberId] = useState('')
+  const [deleteMemberDialog,setDeleteMemberDialog] = useState(false)
+
+  const deleteIconClicked = (id) =>{
+    setDeleteMemberId(id)
+    setDeleteMemberDialog(true)
+  }
+
+  const handleDeleteMemberDialogClosed = () =>{
+    setDeleteMemberId('')
+    setDeleteMemberDialog(false)
+  }
+
+
+
   const [DeleteMemberFromProject,  deleteMemberFromProjectMutation ] = useMutation(DELETE_MEMBER_FROM_PROJECT_MUTATION);
 
   const makeDeleteMemberFromProject = (memberId) =>{
@@ -299,7 +316,7 @@ export default function ViwProject(props) {
           if(result.data){
               NotificationManager.success("Member Deleted Successfully",'Success',3000);
              dispatch({type:REMOVE_MEMBER_FROM_PROJECT,payload:{ id:props.viewId,memberid:memberId }})
-             console.log(projectDataFromStore)
+             handleDeleteMemberDialogClosed()
           }
       })
       .catch((res) => {
@@ -326,6 +343,24 @@ export default function ViwProject(props) {
 
     return (
       <div>
+          <Dialog open={deleteMemberDialog} onClose={()=>{handleDeleteMemberDialogClosed()}}
+                    >
+                        <DialogTitle id="alert-dialog-title" style={{color:"#4863c7"}}>{"ARE YOU SURE TO REMOVE MEMBER FROM PROJECT ?"}</DialogTitle>
+                        <DialogActions>
+                        <Button onClick={()=>{handleDeleteMemberDialogClosed()}}  variant="outlined"
+                        color="primary"
+                        size="large"   
+                        className={classes.button}
+                        startIcon={<CancelIcon />}> Cancel </Button>
+                        <Button 
+                        onClick={()=>{makeDeleteMemberFromProject(deleteMemberId)}}
+                          variant="contained"
+                        color="primary"
+                        size="large"
+                        className={classes.button}
+                        startIcon={<SaveIcon />}> Save </Button>
+                    </DialogActions>
+            </Dialog>
           <Dialog open={viewCommentDialog} onClose={handleViewCommentDialog}
                     >
                         <DialogTitle id="alert-dialog-title" style={{color:"#4863c7"}}>{"COMMENTS FOR PROJECTS :"}</DialogTitle>
@@ -639,7 +674,7 @@ export default function ViwProject(props) {
                 </Box>
                 </React.Fragment>
                 }
-                <ViewProjectAppBar projectToDisplay={projectToDisplay} makeDeleteMemberFromProject={makeDeleteMemberFromProject}></ViewProjectAppBar>   
+                <ViewProjectAppBar projectToDisplay={projectToDisplay} deleteIconClicked={deleteIconClicked}></ViewProjectAppBar>   
           </div>
         );
     }
