@@ -31,7 +31,6 @@ function App() {
           <MemberRoute path="/profile" exact component={ProfileScreen}></MemberRoute> 
           <Route  component={PageNotFound} />
         </Switch>
-       
         </BrowserRouter>
         </Provider>
       </ApolloProvider>

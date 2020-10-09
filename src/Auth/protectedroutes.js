@@ -1,3 +1,6 @@
+// Author : Hari Venkatesh P 
+// This Component is used for creating protetced routes for maintaing the auth
+
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom'
 import {isMemberLoggedIn,isAdminLoggedIn} from "../Auth/authutils"

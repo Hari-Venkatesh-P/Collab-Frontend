@@ -1,18 +1,18 @@
-import React , {useEffect, useState} from 'react';
-import {useSelector,useDispatch} from "react-redux"
+// Author : Hari Venkatesh P 
+// This Component is used a for rendering select for selecting member names while assigning the project
+
+import React  from 'react';
+import {useDispatch} from "react-redux"
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+
 import {ASSIGN_PROJECTS} from "../redux/actions/ProjectActions"
 
 
 export default function MemberMenu (props) {
     
-    console.log(props.teamNames)
-
-    
-    const dispatch = useDispatch()
+   const dispatch = useDispatch()
 
    const handleMemberChange = (e) =>{
      if(e.target.value && props.teamId){

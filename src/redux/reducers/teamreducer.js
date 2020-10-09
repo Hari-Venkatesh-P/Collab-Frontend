@@ -1,4 +1,9 @@
-import {GET_ALL_TEAMS_BASIC_DETAILS , ADD_NEW_TEAM , GET_TEAM_CORE_DETAILS  ,TEAM_NAMES_FOR_NEW_MEMBER, ADD_NEW_MEMBER , RESET_TEAM_STORE_DETAILS} from "../actionstrings"
+import {GET_ALL_TEAMS_BASIC_DETAILS ,
+      ADD_NEW_TEAM , 
+      GET_TEAM_CORE_DETAILS  ,
+      TEAM_NAMES_FOR_NEW_MEMBER , 
+      RESET_TEAM_STORE_DETAILS,
+    } from "../actions/teamActions"
 
 const initialState = {
     teams : [],

@@ -1,3 +1,6 @@
+// Author : Hari Venkatesh P
+// This Component is used to dispay all the members/colleagues 
+
 import React ,{useEffect , useState}from 'react';
 import { useQuery , useMutation  } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
@@ -21,26 +24,33 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import Radio from '@material-ui/core/Radio';
-
 import {MuiPickersUtilsProvider,KeyboardDatePicker,} from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';import "react-datepicker/dist/react-datepicker.css";
+
+
+
 import { GET_MEMBERS_QUERY} from "../graphql/members/memberquery"
 import {GET_TEAMS_NAMES_QUERY} from "../graphql/teams/teamquery"
 import {ADD_NEW_MEMBER_MUTATION , DELETE_MEMBER_MUTATION} from "../graphql/members/membermutation"
-import {GET_ALL_MEMBERS_BASIC_DETAILS , TEAM_NAMES_FOR_NEW_MEMBER,ADD_NEW_MEMBER , DELETE_MEMBER} from "../redux/actionstrings"
+import {GET_ALL_MEMBERS_BASIC_DETAILS , ADD_NEW_MEMBER , DELETE_MEMBER} from "../redux/actions/memberActions"
+import {TEAM_NAMES_FOR_NEW_MEMBER} from "../redux/actions/teamActions"
+import {isMemberLoggedIn , getLoggedInUserId} from "../Auth/authutils";
+
+
 import DataTable from "../components/table"
 import NavBar from "../components/navbar" 
 import Loader from "../components/loader"
 import ViewMember from "../components/viewmember"
-import {isMemberLoggedIn , getLoggedInUserId} from "../Auth/authutils";
 
 function MemberScreen(props) {
 
   useEffect(()=>{
     console.log("Teams Screen is useEffect Called")
   })
+
+  const dispatch = useDispatch()  
+  const memberData = useSelector(state=>state.memberReducer.members)
 
   const useStyles = makeStyles((theme) => ({
     button: {
@@ -51,8 +61,7 @@ function MemberScreen(props) {
   const classes = useStyles()
 
 
-  const dispatch = useDispatch()  
-  const memberData = useSelector(state=>state.memberReducer.members)
+
   
   const [newMemberName,setNewMemberName] = useState('')
   const [newMemberEmail,setNewMemberEmail] = useState('')
@@ -61,15 +70,17 @@ function MemberScreen(props) {
   const [newTeamMemberDOB, setNewTeamMemberDOB] = React.useState(new Date());
   const [newTeamMemberGender, setNewTeamMemberGender] = React.useState('');
   const [newMemberTeam,setNewMemberTeam] = useState('')
-
-
   const [basicView,setBasicView] = useState(true)
   const [viewId,setViewId] = useState('')
   const [open, setOpen] = useState(false);
-
+  const [deleteId,setDeleteId] = useState('')
+  const [deleteDialog,setDeleteDialog] = useState(false)
 
   const existingTeams = useSelector(state=>state.teamReducer.existingTeams)
   var emailPattern = new RegExp("^[a-z0-9._%+-]+@[a-z0-9.-]+[.]{1}[a-z]{2,3}")
+
+
+
 
 
   const handleClickOpen = () => {
@@ -83,6 +94,16 @@ function MemberScreen(props) {
       setNewTeamMemberGender('')
       setOpen(false);
   };
+
+  const deleteIconClicked = (id) =>{
+    setDeleteId(id)
+    setDeleteDialog(true)
+  }
+
+  const handleDeleteDialogClosed = () =>{
+    setDeleteId('')
+    setDeleteDialog(false)
+  }
 
   const toggleToTeamCoreDetailsView = (id) =>{
       if(id){
@@ -178,18 +199,7 @@ function MemberScreen(props) {
   }
 
 
-  const [deleteId,setDeleteId] = useState('')
-  const [deleteDialog,setDeleteDialog] = useState(false)
 
-  const deleteIconClicked = (id) =>{
-    setDeleteId(id)
-    setDeleteDialog(true)
-  }
-
-  const handleDeleteDialogClosed = () =>{
-    setDeleteId('')
-    setDeleteDialog(false)
-  }
 
   const [DeleteMember,  deleteMemberMutationData ] = useMutation(DELETE_MEMBER_MUTATION);
 
@@ -330,18 +340,6 @@ function MemberScreen(props) {
                           </Box>
                         </Box>
                         <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
-                        <Box p={1} >
-                              <InputLabel htmlFor="component-simple"  style={{color:"black"}}> Picture </InputLabel>
-                          </Box>
-                          <Box p={1} >
-                          <Button variant="outlined"
-                                               color="primary" aria-label="upload picture"
-                                                className={classes.button}
-                                                startIcon={ <PhotoCamera />}
-                                        >
-                                           UPLOAD
-                                        </Button>
-                          </Box>
                           <Box display="flex" justifyContent="flex-start" m={1} p={1} bgcolor="background.paper">
                           <Box p={1} >
                               <InputLabel htmlFor="component-simple"  style={{color:"black"}}>Member Team  :</InputLabel>

@@ -1,3 +1,7 @@
+// Author : Hari Venkatesh P 
+// This functions are used for authorization
+
+
 const base64 = require('base64url');
 
 function setTokens(payloadFromLogin){

@@ -1,3 +1,6 @@
+// Author : Hari Venkatesh P 
+// This Component is used as app bar to display team details
+
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';

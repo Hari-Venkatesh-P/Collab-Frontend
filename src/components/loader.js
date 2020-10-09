@@ -1,3 +1,6 @@
+// Author : Hari Venkatesh P 
+// This Component is used for displaying loader while query is executing
+
 import React from 'react';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';

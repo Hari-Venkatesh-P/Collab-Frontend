@@ -1,10 +1,13 @@
+// Author : Hari Venkatesh P 
+// This Component is used to as app bar for displaying member details
+
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AssignmentLateTwoToneIcon from '@material-ui/icons/AssignmentLateTwoTone';
 import PeopleTwoToneIcon from '@material-ui/icons/PeopleTwoTone';
-import { isMemberLoggedIn , getLoggedInUserId} from "../Auth/authutils"
+import { isMemberLoggedIn } from "../Auth/authutils"
 import AppBarTable from "../components/appbartable"
 
 export default function MemberAppBar(props) {

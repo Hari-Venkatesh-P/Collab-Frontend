@@ -1,8 +1,9 @@
-import React ,{useEffect , useState}from 'react';
+// Author : Hari Venkatesh P 
+// This Component is the login Page
+
+import React ,{ useState}from 'react';
 import { useMutation   } from '@apollo/client';
-import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -12,16 +13,17 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import { useHistory } from "react-router";
-import {LOGIN_MEMBER} from "../graphql/members/membermutation"
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-import {useDispatch} from "react-redux"
+import { NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
+
+import {LOGIN_MEMBER} from "../graphql/members/membermutation"
 import {setTokens} from "../Auth/authutils"
 
 const LoginScreen = () =>{
 
     const history = useHistory();
-    const dispatch = useDispatch();
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
     const [visiblity,setVisiblity]  = useState(false)
@@ -59,15 +61,13 @@ const LoginScreen = () =>{
       .catch((res) => {
           res.graphQLErrors.map((error) => {
             if(error.message.startsWith("Database Error: ")){
-            //  NotificationManager.error(error.message,'Error',4000);
+              NotificationManager.error(error.message,'Error',4000);
             }else{
-            //  NotificationManager.warning(error.message,'Warning',3000);
+              NotificationManager.warning(error.message,'Warning',3000);
             }
       });
       });
     }
-    
-            
 
     return(
         <div>

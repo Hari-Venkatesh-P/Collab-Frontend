@@ -1,9 +1,10 @@
+// Author : Hari Venkatesh P 
+// This Component is used to app bar while displaying project details
+
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import AssignmentLateTwoToneIcon from '@material-ui/icons/AssignmentLateTwoTone';
-import PeopleTwoToneIcon from '@material-ui/icons/PeopleTwoTone';
 
 import AppBarTable from "../components/appbartable"
 

@@ -1,10 +1,12 @@
+// Author : Hari Venkatesh P 
+// This Component is used to specific project's Details
+
 import React , {useEffect, useState} from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { green } from '@material-ui/core/colors';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
-
 import Typography from '@material-ui/core/Typography';
 import { useQuery , useMutation  } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
@@ -38,8 +40,8 @@ import {GET_PROJECT_CORE_DETAILS_QUERY} from "../graphql/projects/projectquery"
 import {GET_TEAMS_NAMES_QUERY} from "../graphql/teams/teamquery"
 import {EDIT_PROJECT_MUTATION , DELETE_PROJECT_MUTATION , ASSIGN_PROJECT_TO_MEMBER_MUTATION , UPDATE_PROJECT_STATUS_MUTATION, DELETE_MEMBER_FROM_PROJECT_MUTATION } from "../graphql/projects/projectmutation"
 import {GET_PROJECT_CORE_DETAILS, EDIT_PROJECT , ASSIGN_PROJECTS_TO_MEMBER , UPDATE_PROJECT_STATUS , REMOVE_MEMBER_FROM_PROJECT} from "../redux/actions/ProjectActions";
-import { TEAM_NAMES_FOR_NEW_MEMBER} from "../redux/actionstrings";
-import { isMemberLoggedIn,getLoggedInUserId} from "../Auth/authutils"
+import { TEAM_NAMES_FOR_NEW_MEMBER} from "../redux/actions/teamActions";
+import { isMemberLoggedIn} from "../Auth/authutils"
 
 const useStyles = makeStyles({
     root: {
@@ -71,13 +73,11 @@ const useStyles = makeStyles({
 export default function ViwProject(props) {
 
     useEffect(()=>{
-        console.log(" View Core Details of member  renedered "+props.viewId)
     })
 
     const [editDescription,setEditDescription] = useState('') 
     const [editStartDate,setEditStartDate] = useState(new Date()) 
     const [editEndDate,setEditEndDate] = useState(new Date()) 
-    const [open, setOpen] = useState(false);
 
     const [editDialogOpen, setEditDialogOpen] = useState(false);
 
@@ -114,12 +114,6 @@ export default function ViwProject(props) {
 
     const [deleteDialog,setDeleteDialog] = useState(false)
 
-    // const handleClose = () => {
-    //     // setEditDescription('')
-    //     // setEditStartDate(new Date())
-    //     // setEditEndDate(new Date())
-    //     setOpen(false);
-    // };
     const [projectStatus,setProjectStatus] = React.useState('')
 
     const dispatch = useDispatch()
@@ -167,30 +161,7 @@ export default function ViwProject(props) {
   
     
     const classes = useStyles();
-    const theme = useTheme();
 
-    const getProjectsCount = (projects,status) => {
-        var j = 0
-        if(projects){
-            for(var i=0;i<projects.length;i++){
-                if(projects[i].status === status){
-                    j = j+1
-                }
-            }
-        }
-        return j    
-    }
-
-      const getMobileHelperText = (txt)=> {
-        if(txt === ""){
-          return "Mobile is mandatory"
-        }
-        else if (parseInt(txt.length) !== 10){
-          return "Enter Proper Mobile Number"
-        }else{
-          return ""
-        }
-      }
 
     const [EditProjectMutation,  editProjectMutationData ] = useMutation(EDIT_PROJECT_MUTATION);
 

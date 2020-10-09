@@ -1,3 +1,6 @@
+// Author : Hari Venkatesh P
+// This Component is Used to Display all the Teams created
+
 import React ,{useEffect , useState}from 'react';
 import { useQuery , useMutation  } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
@@ -17,22 +20,18 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import {isMemberLoggedIn} from "../Auth/authutils"
 
 import DataTable from "../components/table"
 import ViewTeam from "../components/viewteams"
 import Loader from "../components/loader"
-import {GET_TEAMS_QUERY , GET_TEAM_COREDETAILS_QUERY} from "../graphql/teams/teamquery"
-import {ADD_NEW_TEAM_MUTATION} from "../graphql/teams/teammutation"
 import NavBar from "../components/navbar" 
-import {GET_ALL_TEAMS_BASIC_DETAILS , ADD_NEW_TEAM} from "../redux/actionstrings"
+
+import {GET_TEAMS_QUERY } from "../graphql/teams/teamquery"
+import {isMemberLoggedIn} from "../Auth/authutils"
+import {ADD_NEW_TEAM_MUTATION} from "../graphql/teams/teammutation"
+import {GET_ALL_TEAMS_BASIC_DETAILS , ADD_NEW_TEAM} from "../redux/actions/teamActions"
 
 function TeamScreen(props) {
-
-
-    useEffect(()=>{
-        console.log("Teams Screen is useEffect Called")
-    })
 
 
     const useStyles = makeStyles((theme) => ({
@@ -41,10 +40,13 @@ function TeamScreen(props) {
         }, 
     }));
 
+    const classes = useStyles()
+
+    useEffect(()=>{
+    })
 
     const dispatch = useDispatch()
     const teamData = useSelector(state=>state.teamReducer)
-
 
     const [newTeamName,setNewTeamName] = useState('')
     const [newTeamSpeciality,setNewTeamSpeciality] = useState('')
@@ -70,7 +72,6 @@ function TeamScreen(props) {
         setBasicView(!basicView)
     }
 
-    const classes = useStyles()
 
     const getTeamsQueryCompleted = (data) =>{
         dispatch({type:GET_ALL_TEAMS_BASIC_DETAILS,payload:data.getTeams})

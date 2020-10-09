@@ -1,4 +1,7 @@
-import React , {useEffect, useState}from 'react';
+// Author : Hari Venkatesh P 
+// This Component is used a for rendering calendar based view for displaying the projects
+
+import React , {useEffect}from 'react';
 import Timeline ,{SidebarHeader,TimelineHeaders,DateHeader}from 'react-calendar-timeline'
 import 'react-calendar-timeline/lib/Timeline.css'
 import moment from 'moment'
@@ -7,13 +10,9 @@ import moment from 'moment'
 function Calendertimeline(props) {
 
 useEffect(()=>{
-  console.log("Caleder Render")
 })
 
-
-
 var groups = []
-
 var items = []
 
 if(props.viewByToggle == "MEMBERS" && props.getMembers && props.getMembers.length !=0){

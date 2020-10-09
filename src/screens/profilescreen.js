@@ -1,3 +1,6 @@
+// Author : Hari Venkatesh P
+// This Component is used to display the profile of the logged in member.
+
 import React , {useEffect, useState} from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -17,16 +20,29 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import { NotificationManager} from 'react-notifications';
+
+
 import MemberAppBar from "../components/memberappbar"
 import NavBar from "../components/navbar"
+
 import {GET_LOGGED_IN_MEMBER__DETAILS_MUTATION} from "../graphql/members/memberquery"
 import {GET_LOGGED_IN_MEMBER_DETAILS , EDIT_LOGGED_IN_MEMBER } from "../redux/actions/memberActions"
 import {EDIT_MEMBER_MUTATION , RESET_MEMBER_PASSWORD} from "../graphql/members/membermutation"
-import { isMemberLoggedIn , getLoggedInUserId} from "../Auth/authutils"
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-const useStyles = makeStyles({
+import {  getLoggedInUserId} from "../Auth/authutils"
+
+
+const useStyles = makeStyles((theme) => ({
+    inputroot: {
+        '& > *': {
+          margin: theme.spacing(1),
+        },
+      },
+      input: {
+        display: 'none',
+      },
     root: {
       minWidth: 500,
     },
@@ -41,7 +57,7 @@ const useStyles = makeStyles({
     pos: {
       marginBottom: 12,
     },
-  });
+  }));
 
 export default function ProfileScreen(props) {
 
@@ -51,16 +67,20 @@ export default function ProfileScreen(props) {
     const dispatch = useDispatch()
     const memberToDisplay = useSelector(state=> state.memberReducer.loggedInMember)
 
-    console.log(memberToDisplay)
-
-
     const [editName,setEditName] = useState('') 
     const [editMobile,setEditMobile] = useState('') 
     const [editAddress,setEditAddress] = useState('') 
     const [open, setOpen] = useState(false);
-
     const [visiblity,setVisiblity]  = useState(false)
     const [showType,setShowtype] = useState('password')
+    const [visiblityNew,setVisiblityNew]  = useState(false)
+    const [showTypeNew,setShowtypeNew] = useState('password')
+    const [currentPassword,setCurrentPassword] = useState('')
+    const [newPassword,setNewPassword] = useState('')
+    const [resetPassDialog,setResetDialogOpen] = useState(false) 
+
+    const classes = useStyles();
+    const theme = useTheme();
 
 
    const  handleVisiblity =  () => {
@@ -72,25 +92,33 @@ export default function ProfileScreen(props) {
     }
     }
 
+    const  handleVisiblityNew =  () => {
+      setVisiblityNew(!visiblityNew)
+      if(showTypeNew=="password"){
+          setShowtypeNew("text")
+      }else{
+          setShowtypeNew("password")
+      }
+    }
+
+    const handleClose = () => {
+      setEditName('')
+      setEditMobile('')
+      setEditAddress('')
+      setOpen(false);
+    };
+
+    const handleResetDialog = () => {
+      setCurrentPassword('')
+      setNewPassword('')
+      setResetDialogOpen(false);
+    };
+
     let icon = null; 
     if (visiblity) {
         icon = <VisibilityIcon style={{color:"blue",cursor:"pointer"}} onClick={()=>{handleVisiblity()}}/>;
     } else {
         icon = <VisibilityOffIcon  style={{color:"blue",cursor:"pointer"}} onClick={()=>{handleVisiblity()}}/>;
-    }
-
-
-    const [visiblityNew,setVisiblityNew]  = useState(false)
-    const [showTypeNew,setShowtypeNew] = useState('password')
-
-
-   const  handleVisiblityNew =  () => {
-    setVisiblityNew(!visiblityNew)
-    if(showTypeNew=="password"){
-        setShowtypeNew("text")
-    }else{
-        setShowtypeNew("password")
-    }
     }
 
     let iconNew = null; 
@@ -99,16 +127,12 @@ export default function ProfileScreen(props) {
 
     } else {
         iconNew = <VisibilityOffIcon  style={{color:"blue",cursor:"pointer"}} onClick={()=>{handleVisiblityNew()}}/>;
-
-
     }
 
-    const classes = useStyles();
-    const theme = useTheme();
+
 
     const getProjectsCount = (projects,status) => {
         var j = 0
-        console.log(projects,status)
         if(projects){
             for(var i=0;i<projects.length;i++){
                 if(projects[i].status === status){
@@ -130,25 +154,6 @@ export default function ProfileScreen(props) {
           return ""
         }
       }
-
-      const handleClose = () => {
-        setEditName('')
-        setEditMobile('')
-        setEditAddress('')
-        setOpen(false);
-    };
-
-
-    const [currentPassword,setCurrentPassword] = useState('')
-    const [newPassword,setNewPassword] = useState('')
-    const [resetPassDialog,setResetDialogOpen] = useState(false) 
-
-    const handleResetDialog = () => {
-        setCurrentPassword('')
-        setNewPassword('')
-        setResetDialogOpen(false);
-    };
-
 
     const [EditMemberMutation,  editMemberMutationData ] = useMutation(EDIT_MEMBER_MUTATION);
 
@@ -192,6 +197,8 @@ export default function ProfileScreen(props) {
       });
       });
     } 
+
+
     var passwordPattern = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{6,12}$")
 
     const doPasswordValidation = (txt)=> {
@@ -213,7 +220,6 @@ export default function ProfileScreen(props) {
 
     const { loading, error} = useQuery(GET_LOGGED_IN_MEMBER__DETAILS_MUTATION,{
         variables:{id:getLoggedInUserId()},
-    // pollInterval: 10000,
         onCompleted:getLoggedInMemberDetailsCompleted
     });
 
@@ -350,7 +356,6 @@ export default function ProfileScreen(props) {
                 <Card className={classes.root} style={{backgroundColor:"lightblue"}}>
                 <CardContent className={classes.content}>
                     <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} >
-                        <img src="https://image.shutterstock.com/image-vector/sample-stamp-grunge-texture-vector-260nw-1389188336.jpg"  width="80" height="130" ></img>
                         <Box  display="flex" flexDirection="column" justifyContent="flex-start" m={1} p={1} >
                         <Box m={1} display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1}>
                             <Box m={1}>
@@ -418,8 +423,7 @@ export default function ProfileScreen(props) {
             </CardContent>
           </Card>
           <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
-
-                        <Box p={1} >
+            <Box p={1} >
               <Button variant="outlined" color="primary"
                       className={classes.button}
                       startIcon={<LockOpenIcon />}
@@ -438,7 +442,6 @@ export default function ProfileScreen(props) {
                   Edit Member Details
                     </Button>
                     </Box>
-                    
           </Box>
           {memberToDisplay._id && <MemberAppBar memberDetails={memberToDisplay} isProfileScreen={true}></MemberAppBar>}
 

@@ -1,8 +1,10 @@
+// Author : Hari Venkatesh P 
+// This Component is used to specific member's Details
+
 import React , {useEffect, useState} from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
 import Typography from '@material-ui/core/Typography';
 import { useQuery , useMutation  } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
@@ -21,10 +23,9 @@ import { NotificationManager} from 'react-notifications';
 import MemberAppBar from "../components/memberappbar"
 
 import {GET_MEMBER_CORE_DETAILS_QUERY} from "../graphql/members/memberquery"
-import {GET_MEMBER_CORE_DETAILS} from "../redux/actions/memberActions"
+import {GET_MEMBER_CORE_DETAILS , EDIT_MEMBER} from "../redux/actions/memberActions"
 import {EDIT_MEMBER_MUTATION } from "../graphql/members/membermutation"
-import {EDIT_MEMBER} from "../redux/actionstrings"
-import { isMemberLoggedIn , getLoggedInUserId} from "../Auth/authutils"
+import { isMemberLoggedIn } from "../Auth/authutils"
 
 
 const useStyles = makeStyles({
@@ -47,7 +48,6 @@ const useStyles = makeStyles({
 export default function ViewMember(props) {
 
     useEffect(()=>{
-        console.log(" View Core Details of member  renedered "+props.viewId)
     })
 
     const [editName,setEditName] = useState('') 
@@ -80,12 +80,9 @@ export default function ViewMember(props) {
     });
   
     const classes = useStyles();
-    const theme = useTheme();
 
-    console.log(memberToDisplay)
     const getProjectsCount = (projects,status) => {
         var j = 0
-        console.log(projects,status)
         if(projects){
             for(var i=0;i<projects.length;i++){
                 if(projects[i].status === status){

@@ -1,3 +1,6 @@
+// Author : Hari Venkatesh P 
+// This Component is used as a table for displaying details along with app bar
+
 import React from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -9,6 +12,8 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
+
+
 import {isMemberLoggedIn} from "../Auth/authutils";
 
 const StyledTableCell = withStyles((theme) => ({
@@ -40,7 +45,6 @@ const useStyles = makeStyles({
 });
 
 export default function AppBarTable(props) {
-  console.log(props)
   const classes = useStyles();
 
    function renderHeading(){
@@ -83,7 +87,6 @@ export default function AppBarTable(props) {
     }else if(props.isProjectFromMemberScreen){
       headings = ['TITLE' , 'DESCRIPTION','START DATE','END DATE']
       return headings.map((heading,idx) => {
-        console.log(heading)
         return(
         <StyledTableCell key={Math.random()}>{heading}</StyledTableCell>
         )

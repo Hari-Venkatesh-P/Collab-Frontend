@@ -1,15 +1,18 @@
+// Author : Hari Venkatesh P
+// This Component is used to view the individual team details selected
+
 import React , {useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import { useQuery , useMutation  } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
 
 
 import {GET_TEAM_COREDETAILS_QUERY} from "../graphql/teams/teamquery"
-import {GET_TEAM_CORE_DETAILS} from "../redux/actionstrings"
+import {GET_TEAM_CORE_DETAILS} from "../redux/actions/teamActions"
 import TeamAppBar from "../components/teamappbar"
 
 const useStyles = makeStyles({
@@ -32,7 +35,6 @@ const useStyles = makeStyles({
 export default function ViewTeam(props) {
 
    useEffect(()=>{
-        console.log(" View Core Details of team  renedered "+props.viewId)
     })
    const classes = useStyles();
    const dispatch = useDispatch()

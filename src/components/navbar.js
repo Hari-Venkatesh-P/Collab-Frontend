@@ -1,17 +1,18 @@
-import React , {useEffect, useState} from 'react';
+// Author : Hari Venkatesh P 
+// This Component is used to as Navbae for dipalying the available options in top haeders and side bars
+
+import React , { useState} from 'react';
 import { useHistory } from "react-router";
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
 import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import clsx from 'clsx';
 import Drawer from '@material-ui/core/Drawer';
@@ -23,18 +24,20 @@ import ListItemText from '@material-ui/core/ListItemText';
 import AssignmentLateTwoToneIcon from '@material-ui/icons/AssignmentLateTwoTone';
 import PeopleTwoToneIcon from '@material-ui/icons/PeopleTwoTone';
 import PermIdentityTwoToneIcon from '@material-ui/icons/PermIdentityTwoTone';
-import { isMemberLoggedIn } from '../Auth/authutils';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import {useSelector,useDispatch} from "react-redux" 
+import {useDispatch} from "react-redux"
+import {useSubscription } from "@apollo/client"
 import { NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+
+
 import {TEAM_ADDED_SUBSCRIPTION} from  "../graphql/teams/teamsubscription"
 import {MEMBER_ADDED_SUBSCRIPTION} from  "../graphql/members/membersubscriptions"
 import {PROJECT_ADDED_SUBSCRIPTION} from  "../graphql/projects/projectsubscription"
 import {RESET_MEMBER_STORE_DETAILS} from  "../redux/actions/memberActions"
 import {RESET_PROJECT_STORE_DETAILS} from  "../redux/actions/ProjectActions"
-import {RESET_TEAM_STORE_DETAILS} from  "../redux/actionstrings"
-import {useSubscription } from "@apollo/client"
+import {RESET_TEAM_STORE_DETAILS} from  "../redux/actions/teamActions"
+import { isMemberLoggedIn } from '../Auth/authutils';
 
  const useStyles = makeStyles((theme) => ({
     list: {
@@ -107,12 +110,30 @@ import {useSubscription } from "@apollo/client"
 }));
 
 export default function NavBar(props) {
+
   const [notifications,setNotifications] = useState([])
   const history = useHistory();
   const dispatch = useDispatch()
 
+
+  const classes = useStyles();
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+
+
   function memberAddedSubscriptionCalled(data){
-    console.log(data)
     if(data.subscriptionData.data.memberAdded){
       setNotifications(["New Joinee :"+data.subscriptionData.data.memberAdded,...notifications])
       if(isMemberLoggedIn()){
@@ -120,11 +141,10 @@ export default function NavBar(props) {
       }
     }
   } 
-
-  
   const {data : memberdata, loading : memberloading, error :membererror } = useSubscription(MEMBER_ADDED_SUBSCRIPTION,{
     onSubscriptionData:memberAddedSubscriptionCalled
    });
+
 
 
    function projectDataSubscriptionCalled(data){
@@ -135,11 +155,10 @@ export default function NavBar(props) {
       }
     }
   } 
-
-  
   const { data : projectData, loading : projectloading, error :projecterr} = useSubscription(PROJECT_ADDED_SUBSCRIPTION,{
     onSubscriptionData:projectDataSubscriptionCalled
    });
+
 
 
    function teamAddedSubscriptionCalled(teamdata){
@@ -150,16 +169,15 @@ export default function NavBar(props) {
       }
     }
   } 
-
-  
   const { data : teamdata, loading : teamloading, error :teamerr} = useSubscription(TEAM_ADDED_SUBSCRIPTION,{
     onSubscriptionData:teamAddedSubscriptionCalled
    });
 
 
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const menuId = 'primary-search-account-menu';
+  const mobileMenuId = 'primary-search-account-menu-mobile';
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -170,9 +188,14 @@ export default function NavBar(props) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleLogout = () => {
+    dispatch({type:RESET_MEMBER_STORE_DETAILS})
+    dispatch({type:RESET_PROJECT_STORE_DETAILS})
+    dispatch({type:RESET_TEAM_STORE_DETAILS})
+    sessionStorage.removeItem("token")
+    window.location.href="/"
+  }
 
-  const menuId = 'primary-search-account-menu';
-  const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
@@ -195,29 +218,6 @@ export default function NavBar(props) {
     </Menu>
   );
 
-  const handleLogout = () => {
-    dispatch({type:RESET_MEMBER_STORE_DETAILS})
-    dispatch({type:RESET_PROJECT_STORE_DETAILS})
-    dispatch({type:RESET_TEAM_STORE_DETAILS})
-    sessionStorage.removeItem("token")
-    window.location.href="/"
-  }
-
-  const classes = useStyles();
-  const [state, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
-
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-
-    setState({ ...state, [anchor]: open });
-  };
 
   const list = (anchor) => (
     <div

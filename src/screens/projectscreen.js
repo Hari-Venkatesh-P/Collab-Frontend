@@ -1,9 +1,13 @@
+// Author : Hari Venkatesh P
+// This Component is used to view all the projects created
+
+
 import React , {useState , useEffect} from 'react';
 import { useQuery , useMutation  } from '@apollo/client';
 import {useSelector,useDispatch} from "react-redux"
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink} from "react-csv";
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
@@ -22,11 +26,14 @@ import {MuiPickersUtilsProvider,KeyboardDatePicker,} from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import { NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
+
 import {ADD_NEW_PROJECT_MUTATION } from "../graphql/projects/projectmutation";
 import {GET_PROJECTS_QUERY ,GET_PROJECTS_BY_MEMBERS ,GET_PROJECTS_BY_TEAMS ,  } from "../graphql/projects/projectquery";
 import {GET_PROJECT_BASIC_DETAILS , ADD_NEW_PROJECT ,GET_MEMBER_PROJECTS , GET_TEAM_PROJECTS} from "../redux/actions/ProjectActions";
-import { NotificationManager} from 'react-notifications';
-import 'react-notifications/lib/notifications.css';
+
+
 import ProjectAppBar from "../components/projectappbar"
 import ViewProject from "../components/viewproject"
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
@@ -35,21 +42,33 @@ import {isMemberLoggedIn ,getLoggedInUserId} from "../Auth/authutils"
 
 function TaskScreen() {
 
-
-  var isMemberPresent
   var userId = ""
+
+  useEffect(()=>{
+    userId = getLoggedInUserId();
+  })
+
+  const useStyles = makeStyles((theme) => ({
+    button: {
+      margin: theme.spacing(1),
+    },
+  }));
+
+  const classes = useStyles()
+  const dispatch = useDispatch()
+  const projectData = useSelector(state => state.projectReducer.projects)
+  const projectDataMemberWise = useSelector(state => state.projectReducer.memberProjects)
+  const projectDataTeamWise = useSelector(state => state.projectReducer.teamProjects)
   
   const [newProjectTitle,setNewProjectTitle] = useState('')
   const [newProjectDescription,setNewProjectDescription] = useState('')
   const [newProjectStartDate,setNewProjectStartDate] = useState(new Date())
   const [newProjectEndDate,setNewProjectEndDate] = useState(new Date())
   const [variables,setVariables] = useState({})
-
-  
-
   const [dashboardView,setDashBoardView] = useState(true)
   const [viewId,setViewId] = useState('')
   const [open, setOpen] = useState(false);
+  const [viewByToggle , setViewByToggle] = useState("MEMBERS")
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -62,13 +81,6 @@ function TaskScreen() {
     setDashBoardView(!dashboardView)
   }
 
-   useEffect(()=>{
-    isMemberPresent = isMemberLoggedIn();
-    console.log(isMemberPresent)
-    userId = getLoggedInUserId();
-    console.log(userId)
-  })
-
   const handleClose = () => {
     setNewProjectTitle('')
     setNewProjectDescription('')
@@ -77,36 +89,20 @@ function TaskScreen() {
     setOpen(false);
   };
 
-  const useStyles = makeStyles((theme) => ({
-    button: {
-      margin: theme.spacing(1),
-    },
-  }));
-
-  const classes = useStyles()
-
-  const dispatch = useDispatch()
-  const projectData = useSelector(state => state.projectReducer.projects)
-
-  const [viewByToggle , setViewByToggle] = useState("MEMBERS")
-
   const handleViewByToggling = (e) =>{
       setViewByToggle(e.target.value)
   }
 
-  const projectDataMemberWise = useSelector(state => state.projectReducer.memberProjects)
 
   const getAllProjectsByMemberCompleted = (data) =>{
     if(data){
       dispatch({type:GET_MEMBER_PROJECTS,payload:data.getMembers})
     }      
   }
-  
   const { loading : projectByMemberLoading, error : projectByMemberErr} = useQuery(GET_PROJECTS_BY_MEMBERS,{
    onCompleted:getAllProjectsByMemberCompleted
   });
 
-  const projectDataTeamWise = useSelector(state => state.projectReducer.teamProjects)
 
 
   const getAllProjectsByTeamCompleted = (data) =>{
@@ -114,30 +110,22 @@ function TaskScreen() {
       dispatch({type:GET_TEAM_PROJECTS,payload:data.getTeams})
     }      
   }
-  
   const { loading : projectByTeamLoading, error : projectByTeamErr} = useQuery(GET_PROJECTS_BY_TEAMS,{
    onCompleted:getAllProjectsByTeamCompleted
   });
 
-  if(userId!="" && isMemberPresent){
-    setVariables({id:userId})
-  }
+
 
   const getAllProjectsCompleted = (data) =>{
     if(data.getProjects){
       dispatch({type:GET_PROJECT_BASIC_DETAILS,payload:data.getProjects})
     }      
   }
-  
-
-    const { loading, error} = useQuery(GET_PROJECTS_QUERY,{
+  const { loading, error} = useQuery(GET_PROJECTS_QUERY,{
       // pollInterval: 10000,
-      variables:{id:getLoggedInUserId()},
-     onCompleted:getAllProjectsCompleted
+    variables:{id:getLoggedInUserId()},
+    onCompleted:getAllProjectsCompleted
     });
-  
-
-
   
 
   const [AddNewProject,  addNewProjectMutationData ] = useMutation(ADD_NEW_PROJECT_MUTATION);
@@ -161,10 +149,6 @@ function TaskScreen() {
     });
     });
   }
-
-
-
-
   return (
     <div>
         <NavBar></NavBar>
