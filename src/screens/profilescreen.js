@@ -355,9 +355,9 @@ export default function ProfileScreen(props) {
                 </Box>
                 <Card className={classes.root} style={{backgroundColor:"lightblue"}}>
                 <CardContent className={classes.content}>
-                    <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} >
-                        <Box  display="flex" flexDirection="column" justifyContent="flex-start" m={1} p={1} >
-                        <Box m={1} display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1}>
+                    <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1}>
+                        <Box  display="flex" flexDirection="column" justifyContent="flex-start"  >
+                          <Box display="flex" flexDirection="row" justifyContent="flex-start">
                             <Box m={1}>
                                 <Typography variant="h6" component="h6"  style={{color:"blue" ,fontSize:"15px"}} >Member Name : </Typography>
                             </Box>
@@ -378,7 +378,7 @@ export default function ProfileScreen(props) {
                                 <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{memberToDisplay.mobile}</Typography>
                             </Box>
                         </Box>
-                        <Box m={1} display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1}>
+                        <Box  display="flex" flexDirection="row" justifyContent="flex-start" >
                             <Box m={1}>
                                 <Typography variant="h6" component="h6"  style={{color:"blue" ,fontSize:"15px"}} >Gender: </Typography>
                             </Box>
@@ -398,7 +398,7 @@ export default function ProfileScreen(props) {
                                 <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{memberToDisplay.address} </Typography>
                             </Box>
                         </Box>
-                        <Box m={1} display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1}>
+                        <Box  display="flex" flexDirection="row" justifyContent="flex-start" >
                             <Box m={1}>
                                 <Typography variant="h6" component="h6"  style={{color:"blue" ,fontSize:"15px"}} >Team : </Typography>
                             </Box>
@@ -422,7 +422,7 @@ export default function ProfileScreen(props) {
               </Box>
             </CardContent>
           </Card>
-          <Box display="flex" justifyContent="flex-end" m={1} p={1} bgcolor="background.paper">
+          <Box display="flex" justifyContent="flex-end" bgcolor="background.paper">
             <Box p={1} >
               <Button variant="outlined" color="primary"
                       className={classes.button}
@@ -439,7 +439,7 @@ export default function ProfileScreen(props) {
                       startIcon={<EditIcon />}
                        onClick={()=>{setOpen(true)}}
                         >
-                  Edit Member Details
+                  Edit Personal Details
                     </Button>
                     </Box>
           </Box>

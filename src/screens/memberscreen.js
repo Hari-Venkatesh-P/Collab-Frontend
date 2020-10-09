@@ -81,8 +81,6 @@ function MemberScreen(props) {
 
 
 
-
-
   const handleClickOpen = () => {
       setOpen(true);
   };
@@ -92,6 +90,7 @@ function MemberScreen(props) {
       setNewMemberEmail('')
       setNewMemberMobile('')
       setNewTeamMemberGender('')
+      setNewTeamMemberDOB(new Date())
       setOpen(false);
   };
 
@@ -120,7 +119,7 @@ function MemberScreen(props) {
   }
 
   const  {loading:teamnamequeryloading,error:teamnamequeryerror} = useQuery(GET_TEAMS_NAMES_QUERY,{
-    // pollInterval: 10000,
+    pollInterval: 30000,
    onCompleted:getTeamNamesQueryCompleted
   });
 
@@ -130,7 +129,7 @@ function MemberScreen(props) {
     }      
   }
   const { loading, error} = useQuery(GET_MEMBERS_QUERY,{
-      // pollInterval: 10000,
+    pollInterval: 30000,
     variables:{id:getLoggedInUserId()},
      onCompleted:getMembersQueryCompleted
   });

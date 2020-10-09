@@ -203,10 +203,9 @@ export default function ViewMember(props) {
                 
             <Card className={classes.root} style={{backgroundColor:"lightblue"}}>
                 <CardContent className={classes.content}>
-                    <Box display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1} >
-                        <img src="https://image.shutterstock.com/image-vector/sample-stamp-grunge-texture-vector-260nw-1389188336.jpg"  width="80" height="130" ></img>
-                        <Box  display="flex" flexDirection="column" justifyContent="flex-start" m={1} p={1} >
-                        <Box m={1} display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1}>
+                    <Box display="flex" flexDirection="row" justifyContent="flex-start"  >
+                        <Box  display="flex" flexDirection="column" justifyContent="flex-start"  >
+                        <Box m={1} display="flex" flexDirection="row" justifyContent="flex-start">
                             <Box m={1}>
                                 <Typography variant="h6" component="h6"  style={{color:"blue" ,fontSize:"15px"}} >Member Name : </Typography>
                             </Box>
@@ -227,7 +226,7 @@ export default function ViewMember(props) {
                                 <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{memberToDisplay.mobile}</Typography>
                             </Box>
                         </Box>
-                        <Box m={1} display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1}>
+                        <Box m={1} display="flex" flexDirection="row" justifyContent="flex-start" >
                             <Box m={1}>
                                 <Typography variant="h6" component="h6"  style={{color:"blue" ,fontSize:"15px"}} >Gender: </Typography>
                             </Box>
@@ -247,7 +246,7 @@ export default function ViewMember(props) {
                                 <Typography variant="h6" component="h6"  style={{color:"black" ,fontSize:"15px"}} >{memberToDisplay.address} </Typography>
                             </Box>
                         </Box>
-                        <Box m={1} display="flex" flexDirection="row" justifyContent="flex-start" m={1} p={1}>
+                        <Box m={1} display="flex" flexDirection="row" justifyContent="flex-start">
                             <Box m={1}>
                                 <Typography variant="h6" component="h6"  style={{color:"blue" ,fontSize:"15px"}} >Team : </Typography>
                             </Box>

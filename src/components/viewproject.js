@@ -41,7 +41,7 @@ import {GET_TEAMS_NAMES_QUERY} from "../graphql/teams/teamquery"
 import {EDIT_PROJECT_MUTATION , DELETE_PROJECT_MUTATION , ASSIGN_PROJECT_TO_MEMBER_MUTATION , UPDATE_PROJECT_STATUS_MUTATION, DELETE_MEMBER_FROM_PROJECT_MUTATION } from "../graphql/projects/projectmutation"
 import {GET_PROJECT_CORE_DETAILS, EDIT_PROJECT , ASSIGN_PROJECTS_TO_MEMBER , UPDATE_PROJECT_STATUS , REMOVE_MEMBER_FROM_PROJECT} from "../redux/actions/ProjectActions";
 import { TEAM_NAMES_FOR_NEW_MEMBER} from "../redux/actions/teamActions";
-import { isMemberLoggedIn} from "../Auth/authutils"
+import { isMemberLoggedIn , getLoggedInUserId} from "../Auth/authutils"
 
 const useStyles = makeStyles({
     root: {
@@ -233,7 +233,7 @@ export default function ViwProject(props) {
       const [UpdateProjectStatusMutation,  updateProjectMutationData ] = useMutation(UPDATE_PROJECT_STATUS_MUTATION);
 
       const makeUpdateStatusMutation = () =>{
-        UpdateProjectStatusMutation({ variables: { id:props.viewId,status:projectStatus,created_by:"5f7dc30409a73edbb4db25ef",content:comment } })
+        UpdateProjectStatusMutation({ variables: { id:props.viewId,status:projectStatus,created_by:getLoggedInUserId(),content:comment } })
         .then(result=>{
             if(result.data){
                 NotificationManager.success("Status Marked as "+projectStatus,'Success',3000);

@@ -8,11 +8,11 @@ import { setContext } from '@apollo/client/link/context';
 
 
 const httpLink = new HttpLink({
-    uri: 'http://localhost:4000/graphql',
+    uri: 'https://collab-services.herokuapp.com/graphql',
 });
 
 const wsLink = new WebSocketLink({
-    uri: `ws://localhost:4000/graphql`,
+    uri: `ws://collab-services.herokuapp.com/graphql`,
     options: {
       reconnect: true
     }
@@ -20,7 +20,7 @@ const wsLink = new WebSocketLink({
 
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   return {
     headers: {
       ...headers,

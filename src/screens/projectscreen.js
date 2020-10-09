@@ -122,7 +122,7 @@ function TaskScreen() {
     }      
   }
   const { loading, error} = useQuery(GET_PROJECTS_QUERY,{
-      // pollInterval: 10000,
+    pollInterval: 30000,
     variables:{id:getLoggedInUserId()},
     onCompleted:getAllProjectsCompleted
     });

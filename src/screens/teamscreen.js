@@ -77,7 +77,7 @@ function TeamScreen(props) {
         dispatch({type:GET_ALL_TEAMS_BASIC_DETAILS,payload:data.getTeams})
     }
     const { loading, error} = useQuery(GET_TEAMS_QUERY,{
-        // pollInterval: 10000,
+       pollInterval: 30000,
        onCompleted:getTeamsQueryCompleted
     });
 
